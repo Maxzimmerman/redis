@@ -13,42 +13,24 @@ defmodule Server do
   Listen for incoming connections
   """
   def listen() do
+    # You can use print statements as follows for debugging, they'll be visible when running tests.
     IO.puts("Logs from your program will appear here!")
+
+    # Uncomment the code below to pass the first stage
+    #
+    # # Since the tester restarts your program quite often, setting SO_REUSEADDR
+    # # ensures that we don't run into 'Address already in use' errors
     {:ok, socket} = :gen_tcp.listen(6379, [:binary, active: false, reuseaddr: true])
+    handle_clients_currently(socket)
+  end
+
+  def handle_clients_currently(socket) do
+    Task.async(fn -> handle_client(socket) end)
+  end
+
+  defp handle_client(socket) do
     {:ok, client} = :gen_tcp.accept(socket)
-    handle_client(client)
-  end
-
-  def handle_client(client) do
-    case :gen_tcp.recv(client, 0) do
-      {:ok, data} ->
-        # Parse RESP2 for PING command
-        case parse_resp2(data) do
-          ["PING"] ->
-            :gen_tcp.send(client, "+PONG\r\n")
-          _ ->
-            :ok
-        end
-        handle_client(client)
-      {:error, :closed} ->
-        :ok
-      {:error, _reason} ->
-        :ok
-    end
-  end
-
-  # Minimal RESP2 array parser for commands like PING
-  defp parse_resp2(<<"*", rest::binary>>) do
-    [_count, rest] = String.split(rest, "\r\n", parts: 2)
-    parse_resp2_items(rest, [])
-  end
-
-  defp parse_resp2_items(<<>>, acc), do: Enum.reverse(acc)
-  defp parse_resp2_items(<<"$", rest::binary>>, acc) do
-    [len, rest] = String.split(rest, "\r\n", parts: 2)
-    {item, rest} = String.split_at(rest, String.to_integer(len))
-    rest = String.replace_prefix(rest, "\r\n", "")
-    parse_resp2_items(rest, [item | acc])
+    :gen_tcp.send(client, "+PONG\r\n")
   end
 end
 
