@@ -26,8 +26,16 @@ defmodule Server do
     Logger.info("Server is listening on port 6379")
     Logger.info(inspect(socket))
     {:ok, client} = :gen_tcp.accept(socket)
-    Logger.info("Client connected: #{inspect(client)}")
+    send(client)
+  end
+
+  def send(client) do
     :gen_tcp.send(client, "+PONG\r\n")
+    if client do
+      Logger.info("Sent message to client: #{inspect(message)}")
+    else
+      Logger.error("Failed to send message, client is nil")
+    end
   end
 end
 
