@@ -23,7 +23,7 @@ defmodule Server do
     case :gen_tcp.recv(client, 0) do
       {:ok, data} ->
         # Respond to PING command
-        if String.trim(data) == "PING" do
+        if String.trim(data) == "*1\r\n$4\r\nPING\r\n" do
           :gen_tcp.send(client, "+PONG\r\n")
         end
         handle_client(client)
