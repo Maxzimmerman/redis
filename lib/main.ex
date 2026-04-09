@@ -25,10 +25,6 @@ defmodule Server do
     {:ok, socket} = :gen_tcp.listen(6379, [:binary, active: false, reuseaddr: true])
 
     Task.async(fn ->
-      Logger.info("Accepted new client connection: #{inspect(client)}")
-      IO.inspect(client)
-      IO.inspect(socket, label: "socket")
-
       with {:ok, client} <- :gen_tcp.accept(socket) do
         :gen_tcp.send(client, "+PONG\r\n")
       end
