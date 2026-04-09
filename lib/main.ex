@@ -35,6 +35,7 @@ defmodule Server do
     case client do
       {:error, reason} ->
         Logger.error("Failed to accept client connection: #{inspect(reason)}")
+        IO.puts("Last")
         {:ok}
       _ ->
         Logger.info("Accepted new client connection: #{inspect(client)}")
