@@ -8,7 +8,7 @@ defmodule Server do
   use Application
 
   def start(_type, _args) do
-    Supervisor.start_link([{Task, fn ->  Server.listen() end}], strategy: :one_for_one)
+    Supervisor.start_link([{Task, fn -> Server.listen() end}], strategy: :one_for_one)
   end
 
   @doc """
@@ -23,19 +23,15 @@ defmodule Server do
     # # Since the tester restarts your program quite often, setting SO_REUSEADDR
     # # ensures that we don't run into 'Address already in use' errors
     {:ok, socket} = :gen_tcp.listen(6379, [:binary, active: false, reuseaddr: true])
-    Task.async(fn ->
-      case :gen_tcp.accept(socket) do
-        {:ok, client} ->
-          Logger.info("Accepted new client connection: #{inspect(client)}")
-          IO.inspect(client)
-          IO.inspect(socket, label: "socket")
-          :gen_tcp.send(client, "+PONG\r\n")
-        _ ->
-          Logger.error("Failed to accept client connection:")
-          IO.puts("Last")
-          {:ok}
-      end
-    end)
+
+    with {:ok, client} <- :gen_tcp.accept(socket) do
+      Task.async(fn ->
+        Logger.info("Accepted new client connection: #{inspect(client)}")
+        IO.inspect(client)
+        IO.inspect(socket, label: "socket")
+        :gen_tcp.send(client, "+PONG\r\n")
+      end)
+    end
   end
 end
 
