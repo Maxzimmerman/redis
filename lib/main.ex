@@ -41,6 +41,10 @@ defmodule Server do
         Logger.error("Failed to accept client connection:")
         IO.puts("Last")
         {:ok}
+      _ ->
+        Logger.error("Unexpected error while accepting client connection")
+        IO.puts("Last")
+        {:ok}
     end
   end
 end
