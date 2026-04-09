@@ -22,9 +22,12 @@ defmodule Server do
   def handle_client(client) do
     case :gen_tcp.recv(client, 0) do
       {:ok, data} ->
-        # Respond to PING command
-        if String.trim(data) == "*1\r\n$4\r\nPING\r\n" do
-          :gen_tcp.send(client, "+PONG\r\n")
+        # Parse RESP2 for PING command
+        case parse_resp2(data) do
+          ["PING"] ->
+            :gen_tcp.send(client, "+PONG\r\n")
+          _ ->
+            :ok
         end
         handle_client(client)
       {:error, :closed} ->
@@ -32,6 +35,20 @@ defmodule Server do
       {:error, _reason} ->
         :ok
     end
+  end
+
+  # Minimal RESP2 array parser for commands like PING
+  defp parse_resp2(<<"*", rest::binary>>) do
+    [_count, rest] = String.split(rest, "\r\n", parts: 2)
+    parse_resp2_items(rest, [])
+  end
+
+  defp parse_resp2_items(<<>>, acc), do: Enum.reverse(acc)
+  defp parse_resp2_items(<<"$", rest::binary>>, acc) do
+    [len, rest] = String.split(rest, "\r\n", parts: 2)
+    {item, rest} = String.split_at(rest, String.to_integer(len))
+    rest = String.replace_prefix(rest, "\r\n", "")
+    parse_resp2_items(rest, [item | acc])
   end
 end
 
