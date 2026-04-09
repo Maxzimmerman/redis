@@ -32,7 +32,7 @@ defmodule Server do
   def send(client) do
     :gen_tcp.send(client, "+PONG\r\n")
     if client do
-      Logger.info("Sent message to client: #{inspect(message)}")
+      Logger.info("Sent message to client: #{inspect(client)}")
     else
       Logger.error("Failed to send message, client is nil")
     end
