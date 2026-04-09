@@ -24,14 +24,16 @@ defmodule Server do
     # # ensures that we don't run into 'Address already in use' errors
     {:ok, socket} = :gen_tcp.listen(6379, [:binary, active: false, reuseaddr: true])
 
-    with {:ok, client} <- :gen_tcp.accept(socket) do
-      Task.async(fn ->
-        Logger.info("Accepted new client connection: #{inspect(client)}")
-        IO.inspect(client)
-        IO.inspect(socket, label: "socket")
+    Task.async(fn ->
+      Logger.info("Accepted new client connection: #{inspect(client)}")
+      IO.inspect(client)
+      IO.inspect(socket, label: "socket")
+
+      with {:ok, client} <- :gen_tcp.accept(socket) do
         :gen_tcp.send(client, "+PONG\r\n")
-      end) |> Task.await()
-    end
+      end
+    end)
+    |> Task.await()
   end
 end
 
