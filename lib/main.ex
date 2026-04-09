@@ -32,12 +32,13 @@ defmodule Server do
   def send_(client, socket) do
     :gen_tcp.send(client, "+PONG\r\n")
     {:ok, client} = :gen_tcp.accept(socket)
-    if client do
-      Logger.info("Sent message to client: #{inspect(client)}")
-      send_(client, socket)
-    else
-      Logger.error("Failed to send message, client is nil")
-      {:ok}
+    case client do
+      {:error, reason} ->
+        Logger.error("Failed to accept client connection: #{inspect(reason)}")
+        {:ok}
+      _ ->
+        Logger.info("Accepted new client connection: #{inspect(client)}")
+        send_(client, socket)
     end
   end
 end
