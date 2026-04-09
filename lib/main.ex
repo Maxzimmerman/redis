@@ -6,7 +6,7 @@ defmodule Server do
   use Application
 
   def start(_type, _args) do
-    Supervisor.start_link([{Task, fn -> Server.listen() end}], strategy: :one_for_one)
+    Supervisor.start_link([{Task, fn -> Task.async(Server.listen()) end}], strategy: :one_for_one)
   end
 
   @doc """
@@ -21,14 +21,6 @@ defmodule Server do
     # # Since the tester restarts your program quite often, setting SO_REUSEADDR
     # # ensures that we don't run into 'Address already in use' errors
     {:ok, socket} = :gen_tcp.listen(6379, [:binary, active: false, reuseaddr: true])
-    handle_clients_currently(socket)
-  end
-
-  def handle_clients_currently(socket) do
-    Task.async(fn -> handle_client(socket) end)
-  end
-
-  defp handle_client(socket) do
     {:ok, client} = :gen_tcp.accept(socket)
     :gen_tcp.send(client, "+PONG\r\n")
   end
