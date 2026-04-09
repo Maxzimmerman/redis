@@ -38,6 +38,7 @@ defmodule Server do
         {:ok}
       {:ok, client} ->
         Logger.info("Accepted new client connection: #{inspect(client)}")
+        IO.inspect(client)
         send_(client, socket)
     end
   end
