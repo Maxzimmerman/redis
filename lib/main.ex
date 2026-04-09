@@ -23,29 +23,19 @@ defmodule Server do
     # # Since the tester restarts your program quite often, setting SO_REUSEADDR
     # # ensures that we don't run into 'Address already in use' errors
     {:ok, socket} = :gen_tcp.listen(6379, [:binary, active: false, reuseaddr: true])
-    Logger.info("Server is listening on port 6379")
-    Logger.info(inspect(socket))
-    {:ok, client} = :gen_tcp.accept(socket)
-    send_(client, socket)
-  end
-
-  def send_(client, socket) do
-    :gen_tcp.send(client, "+PONG\r\n")
-    case :gen_tcp.accept(socket) do
-      {:ok, client} ->
-        Logger.info("Accepted new client connection: #{inspect(client)}")
-        IO.inspect(client)
-        IO.inspect(socket, label: "socket")
-        send_(client, socket)
-      {:error, _reason} ->
-        Logger.error("Failed to accept client connection:")
-        IO.puts("Last")
-        {:ok}
-      _ ->
-        Logger.error("Unexpected error while accepting client connection")
-        IO.puts("Last")
-        {:ok}
-    end
+    Task.async(fn ->
+      case :gen_tcp.accept(socket) do
+        {:ok, client} ->
+          Logger.info("Accepted new client connection: #{inspect(client)}")
+          IO.inspect(client)
+          IO.inspect(socket, label: "socket")
+          :gen_tcp.send(client, "+PONG\r\n")
+        _ ->
+          Logger.error("Failed to accept client connection:")
+          IO.puts("Last")
+          {:ok}
+      end
+    end)
   end
 end
 
