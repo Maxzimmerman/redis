@@ -30,7 +30,7 @@ defmodule Server do
         IO.inspect(client)
         IO.inspect(socket, label: "socket")
         :gen_tcp.send(client, "+PONG\r\n")
-      end)
+      end) |> Task.await()
     end
   end
 end
