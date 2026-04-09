@@ -33,8 +33,8 @@ defmodule Server do
     :gen_tcp.send(client, "+PONG\r\n")
     {:ok, client} = :gen_tcp.accept(socket)
     case client do
-      {:error, reason} ->
-        Logger.error("Failed to accept client connection: #{inspect(reason)}")
+      {:error, _reason} ->
+        Logger.error("Failed to accept client connection:")
         IO.puts("Last")
         {:ok}
       _ ->
