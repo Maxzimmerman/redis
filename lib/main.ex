@@ -3,6 +3,8 @@ defmodule Server do
   Your implementation of a Redis server
   """
 
+  require Logger
+
   use Application
 
   def start(_type, _args) do
@@ -21,9 +23,10 @@ defmodule Server do
     # # Since the tester restarts your program quite often, setting SO_REUSEADDR
     # # ensures that we don't run into 'Address already in use' errors
     {:ok, socket} = :gen_tcp.listen(6379, [:binary, active: false, reuseaddr: true])
-    IO.inspect(socket)
+    Logger.info("Server is listening on port 6379")
+    Logger.info(inspect(socket))
     {:ok, client} = :gen_tcp.accept(socket)
-    IO.inspect(client)
+    Logger.info("Client connected: #{inspect(client)}")
     :gen_tcp.send(client, "+PONG\r\n")
   end
 end
