@@ -13,24 +13,24 @@ defmodule Server do
   Listen for incoming connections
   """
   def listen() do
-    # You can use print statements as follows for debugging, they'll be visible when running tests.
     IO.puts("Logs from your program will appear here!")
-
-    # Uncomment the code below to pass the first stage
-    #
-    # # Since the tester restarts your program quite often, setting SO_REUSEADDR
-    # # ensures that we don't run into 'Address already in use' errors
     {:ok, socket} = :gen_tcp.listen(6379, [:binary, active: false, reuseaddr: true])
     {:ok, client} = :gen_tcp.accept(socket)
-    send_pong(client)
+    handle_client(client)
   end
 
-  def send_pong(client) do
-    :gen_tcp.send(client, "+PONG\r\n")
-    if client do
-      send_pong(client)
-    else
-      :ok
+  def handle_client(client) do
+    case :gen_tcp.recv(client, 0) do
+      {:ok, data} ->
+        # Respond to PING command
+        if String.trim(data) == "PING" do
+          :gen_tcp.send(client, "+PONG\r\n")
+        end
+        handle_client(client)
+      {:error, :closed} ->
+        :ok
+      {:error, _reason} ->
+        :ok
     end
   end
 end
