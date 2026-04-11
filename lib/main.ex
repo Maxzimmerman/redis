@@ -29,7 +29,6 @@ defmodule Server do
   def get_clients(socket) do
     case :gen_tcp.accept(socket) do
       {:ok, client} ->
-        :gen_tcp.send(client, "+PONG\r\n")
         handle_ping(client)
         get_clients(socket)
       {:error, reason} ->
