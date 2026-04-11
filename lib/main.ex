@@ -39,8 +39,8 @@ defmodule Server do
 
   @spec handle_ping(any()) :: any()
   def handle_ping(client) do
-    :gen_tcp.send(client, "+PONG\r\n")
     if :gen_tcp.recv(client, 0) do
+      :gen_tcp.send(client, "+PONG\r\n")
       handle_ping(client)
     else
       :gen_tcp.close(client)
