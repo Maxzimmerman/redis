@@ -29,7 +29,7 @@ defmodule Server do
   def get_clients(socket) do
     case :gen_tcp.accept(socket) do
       {:ok, client} ->
-        handle_ping(client)
+        Task.async(fn -> handle_ping(client) end) |> Task.await()
         get_clients(socket)
       {:error, reason} ->
         Logger.error("Error accepting connection: #{reason}")
@@ -39,10 +39,12 @@ defmodule Server do
 
   @spec handle_ping(any()) :: any()
   def handle_ping(client) do
-    Task.async(fn ->
-      :gen_tcp.send(client, "+PONG\r\n")
-    end)
-    |> Task.await()
+    :gen_tcp.send(client, "+PONG\r\n")
+    if :gen_tcp.recv(client, 0) do
+      handle_ping(client)
+    else
+      :gen_tcp.close(client)
+    end
   end
 end
 
