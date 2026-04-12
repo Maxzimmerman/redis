@@ -19,7 +19,7 @@ defmodule Commands.Handler do
   end
 
   defp find_command({:ok, data}) do
-    IO.inspect("Received data: #{String.split(data, "n$")}")
+    IO.inspect("Received data: #{String.split(data, "\r\n") |> List.first()}")
     Map.get(@commands, String.trim(data))
   end
 
