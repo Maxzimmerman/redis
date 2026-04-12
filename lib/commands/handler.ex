@@ -19,8 +19,11 @@ defmodule Commands.Handler do
   end
 
   defp find_command({:ok, data}) do
-    IO.inspect("Received data: #{String.split(data, "\r\n") |> List.first()}")
-    Map.get(@commands, String.trim(data))
+    parts = String.split(data, "\r\n", trim: true)
+    # Filter out RESP prefixes (*N, $N) to get just the values
+    args = Enum.reject(parts, fn s -> String.starts_with?(s, "*") or String.starts_with?(s, "$") end)
+    command = List.first(args) |> String.upcase()
+    {Map.get(@commands, command), Enum.drop(args, 1)}
   end
 
   defp find_command({:error, reason}) do
