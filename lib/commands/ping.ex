@@ -2,11 +2,11 @@ defmodule Commands.Ping do
   @behaviour Commands.Behaviour
   require Logger
 
-  def handle_client_async(client) do
+  def handle_client_async(client, _args) do
     case :gen_tcp.recv(client, 0) do
       {:ok, _data} ->
         :gen_tcp.send(client, "+PONG\r\n")
-        handle_client_async(client)
+        handle_client_async(client, _args)
 
       {:error, :closed} ->
         :gen_tcp.close(client)
