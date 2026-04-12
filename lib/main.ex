@@ -7,6 +7,8 @@ defmodule Server do
 
   use Application
 
+  alias Commands.Ping
+
   def start(_type, _args) do
     Supervisor.start_link([{Task, fn -> Server.listen() end}], strategy: :one_for_one)
   end
@@ -23,29 +25,7 @@ defmodule Server do
     # # Since the tester restarts your program quite often, setting SO_REUSEADDR
     # # ensures that we don't run into 'Address already in use' errors
     {:ok, socket} = :gen_tcp.listen(6379, [:binary, active: false, reuseaddr: true])
-    get_clients(socket)
-  end
-
-  def get_clients(socket) do
-    case :gen_tcp.accept(socket) do
-      {:ok, client} ->
-        Task.start(fn -> handle_ping(client) end)
-        get_clients(socket)
-      {:error, reason} ->
-        Logger.error("Error accepting connection: #{reason}")
-    end
-
-  end
-
-  @spec handle_ping(any()) :: any()
-  def handle_ping(client) do
-    case :gen_tcp.recv(client, 0) do
-    ({:ok, _data}) ->
-      :gen_tcp.send(client, "+PONG\r\n")
-      handle_ping(client)
-    ({:error, :closed}) ->
-      :gen_tcp.close(client)
-    end
+    Ping.handle_connections(socket)
   end
 end
 
