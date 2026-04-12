@@ -19,6 +19,7 @@ defmodule Commands.Handler do
   end
 
   defp find_command({:ok, data}) do
+    IO.inspect("Received data: #{String.trim(data)}")
     Map.get(@commands, String.trim(data))
   end
 
