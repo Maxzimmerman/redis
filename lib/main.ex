@@ -6,6 +6,7 @@ defmodule Server do
   use Application
 
   alias Commands.Ping
+  alias Commands.Echo
 
   def start(_type, _args) do
     Supervisor.start_link([{Task, fn -> Server.listen() end}], strategy: :one_for_one)
@@ -24,6 +25,7 @@ defmodule Server do
     # # ensures that we don't run into 'Address already in use' errors
     {:ok, socket} = :gen_tcp.listen(6379, [:binary, active: false, reuseaddr: true])
     Ping.handle_connections(socket)
+    Echo.handle_connections(socket)
   end
 end
 
