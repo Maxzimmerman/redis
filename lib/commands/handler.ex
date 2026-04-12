@@ -8,7 +8,7 @@ defmodule Commands.Handler do
 
   def handle_connections_async(socket) do
     for {_command, module} <- @commands do
-      Task.start(fn -> module.handle_connections_async(socket) end)
+      module.handle_connections_async(socket)
     end
   end
 end
