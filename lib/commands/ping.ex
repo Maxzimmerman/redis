@@ -9,12 +9,7 @@ defmodule Commands.Ping do
         if command == "PING" do
           Logger.info(client: client, args: args, message: "Received PING command")
           Task.start(fn -> handle_client_async(client, args) end)
-        else
-          Logger.warn(client: client, command: command, message: "Received unsupported command")
-          :gen_tcp.send(client, "-ERR unknown command\r\n")
-          :gen_tcp.close(client)
         end
-
       {:error, reason} ->
         Logger.error("Error accepting connection: #{reason}")
     end
