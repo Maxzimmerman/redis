@@ -7,8 +7,7 @@ defmodule Commands.Handler do
   }
 
   def handle_connections_async(socket) do
-    for {_command, module} <- @commands do
-      module.handle_connections_async(socket)
-    end
+    Commands.Ping.handle_connections_async(socket)
+    Commands.Echo.handle_connections_async(socket)
   end
 end
