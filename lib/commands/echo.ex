@@ -17,7 +17,6 @@ defmodule Commands.Echo do
   end
 
   def handle_client_async(client, args) do
-    Logger.info(client: client, args: args, message: "Received ECHO command")
     message = List.first(args)
     :gen_tcp.send(client, "$#{byte_size(message)}\r\n#{message}\r\n")
 
