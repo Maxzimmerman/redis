@@ -2,12 +2,13 @@ defmodule Commands.Echo do
   @behaviour Commands.Behaviour
   require Logger
 
-  def handle_client_async(client) do
+  def handle_client_async(client, args) do
+    message = List.first(args)
+    :gen_tcp.send(client, "$#{byte_size(message)}\r\n#{message}\r\n")
+
     case :gen_tcp.recv(client, 0) do
-      {:ok, data} ->
-        IO.inspect("Received data: #{data}")
-        :gen_tcp.send(client, "+#{data}\r\n")
-        handle_client_async(client)
+      {:ok, _data} ->
+        handle_client_async(client, args)
       {:error, :closed} -> :gen_tcp.close(client)
        _ -> Logger.error("Error receiving data")
       end
