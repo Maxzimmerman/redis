@@ -31,7 +31,8 @@ defmodule Commands.Ping do
     parts = String.split(data, "\r\n", trim: true)
     # Filter out RESP prefixes (*N, $N) to get just the values
     args = Enum.reject(parts, fn s -> String.starts_with?(s, "*") or String.starts_with?(s, "$") end)
-    Enum.drop(args, 1)
+    command = List.first(args) |> String.upcase()
+    {command, Enum.drop(args, 1)}
   end
 
   defp encode_data({:error, reason}) do
