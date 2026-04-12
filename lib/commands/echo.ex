@@ -14,6 +14,7 @@ defmodule Commands.Echo do
   def handle_client(client) do
     case :gen_tcp.recv(client, 0) do
       {:ok, data} ->
+        IO.inspect("Received data: #{data}")
         :gen_tcp.send(client, "+#{data}\r\n")
         handle_client(client)
       {:error, :closed} -> :gen_tcp.close(client)
