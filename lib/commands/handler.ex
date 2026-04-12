@@ -10,7 +10,7 @@ defmodule Commands.Handler do
     case :gen_tcp.accept(socket) do
       {:ok, client} ->
         {command, args} = find_command(:gen_tcp.recv(client, 0))
-        Task.start(fn -> command.handle_client_async(client, args) end)
+        Task.start(fn -> command.handle_client_async(socket, client, args) end)
         handle_connections_async(socket)
 
       {:error, reason} ->
