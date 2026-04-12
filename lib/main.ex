@@ -3,8 +3,6 @@ defmodule Server do
   Your implementation of a Redis server
   """
 
-  require Logger
-
   use Application
 
   alias Commands.Ping
