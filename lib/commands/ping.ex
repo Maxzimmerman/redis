@@ -15,7 +15,7 @@ defmodule Commands.Ping do
   end
 
   def handle_client_async(client, args) do
-    Logger.info(client: client, args: args, message: "Received ECHO command")
+    Logger.info(client: client, args: args, message: "Received PING command")
     case :gen_tcp.recv(client, 0) do
       {:ok, _data} ->
         :gen_tcp.send(client, "+PONG\r\n")
