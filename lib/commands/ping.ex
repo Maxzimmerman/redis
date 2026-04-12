@@ -5,7 +5,8 @@ defmodule Commands.Ping do
   def handle_connections_async(socket) do
     case :gen_tcp.accept(socket) do
       {:ok, client} ->
-        args = encode_data(:gen_tcp.recv(client, 0))
+        {command, args} = encode_data(:gen_tcp.recv(client, 0))
+        IO.inspect(command: command, args: args, message: "Received command")
         Task.start(fn -> handle_client_async(client, args) end)
         handle_connections_async(socket)
 
