@@ -13,6 +13,9 @@ defmodule Commands.Ping do
       {:error, :closed} ->
         IO.inspect("Erorr")
         :gen_tcp.close(client)
+
+      _ ->
+        Logger.error("Error receiving data")
     end
   end
 end
