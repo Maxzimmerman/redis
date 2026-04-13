@@ -4,14 +4,6 @@ defmodule Commands.Ping do
 
   def execute(client, message) do
     Logger.info(client: client, message: message)
-    case :gen_tcp.recv(client, 0) do
-      {:ok, _data} ->
-        :gen_tcp.send(client, "+PONG\r\n")
-        execute(client, message)
-
-      {:error, :closed} ->
-        :gen_tcp.close(client)
-
-    end
+    :gen_tcp.send(client, "+PONG\r\n")
   end
 end
