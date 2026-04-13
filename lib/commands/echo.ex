@@ -14,4 +14,10 @@ defmodule Commands.Echo do
 
     end
   end
+
+  def execute(client, args) do
+    Logger.error(client: client, args: args, message: "Invalid ECHO command format")
+    :gen_tcp.send(client, "-ERR wrong number of arguments for 'ECHO' command\r\n")
+    execute(client, args)
+  end
 end
