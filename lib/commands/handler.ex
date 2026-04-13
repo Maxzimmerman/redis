@@ -15,11 +15,11 @@ defmodule Commands.Handler do
   end
 
   def handle_client_async(client) do
-    {command, args} = encode_data(:gen_tcp.recv(client, 0))
+    {command, message} = encode_data(:gen_tcp.recv(client, 0))
 
      case command do
-      "PING" -> Ping.execute(client, args)
-      "ECHO" -> Echo.execute(client, args)
+      "PING" -> Ping.execute(client, message)
+      "ECHO" -> Echo.execute(client, message)
       _ -> Logger.error("Unknown command: #{command}")
     end
   end

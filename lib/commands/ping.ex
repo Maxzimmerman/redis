@@ -2,12 +2,12 @@ defmodule Commands.Ping do
   @behaviour Commands.Behaviour
   require Logger
 
-  def execute(client, args) do
-    Logger.info(client: client, args: args, message: "Received PING command")
+  def execute(client, message) do
+    Logger.info(client: client, message: message)
     case :gen_tcp.recv(client, 0) do
       {:ok, _data} ->
         :gen_tcp.send(client, "+PONG\r\n")
-        execute(client, args)
+        execute(client, message)
 
       {:error, :closed} ->
         :gen_tcp.close(client)
