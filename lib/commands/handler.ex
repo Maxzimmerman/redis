@@ -32,16 +32,11 @@ defmodule Commands.Handler do
     end
   end
 
-  defp encode_data({:ok, data}) do
+  defp encode_data(data) do
     parts = String.split(data, "\r\n", trim: true)
     # Filter out RESP prefixes (*N, $N) to get just the values
     args = Enum.reject(parts, fn s -> String.starts_with?(s, "*") or String.starts_with?(s, "$") end)
     command = List.first(args) |> String.upcase()
     {command, Enum.drop(args, 1)}
-  end
-
-  defp encode_data({:error, reason}) do
-    Logger.error("Error receiving data: #{reason}")
-    nil
   end
 end
