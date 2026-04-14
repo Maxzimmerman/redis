@@ -3,6 +3,7 @@ defmodule Commands.Handler do
 
   alias Commands.Ping
   alias Commands.Echo
+  alias Commands.Set
 
   def handle_connections_async(socket) do
     case :gen_tcp.accept(socket) do
@@ -22,6 +23,7 @@ defmodule Commands.Handler do
         case command do
           "PING" -> Ping.execute(client, message)
           "ECHO" -> Echo.execute(client, message)
+          "SET" -> Set.execute(client, message)
           _ -> Logger.error("Unknown command: #{command}")
         end
 
