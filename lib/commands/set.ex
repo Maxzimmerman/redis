@@ -9,6 +9,6 @@ defmodule Commands.Set do
     :gen_tcp.send(client, "+OK\r\n")
     IO.inspect(List.first(message), label: "Key to set")
     IO.inspect(List.last(message), label: "Value to set")
-    %{key_values | List.first(message) => List.last(message)}
+    Map.put(key_values, List.first(message), List.last(message))
   end
 end
