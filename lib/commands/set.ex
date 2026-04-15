@@ -7,6 +7,6 @@ defmodule Commands.Set do
     IO.inspect(message, label: "SET command received with args")
     # For simplicity, we just acknowledge the SET command without actual storage
     :gen_tcp.send(client, "+OK\r\n")
-    %{List.first(message) => List.last(message) | key_values}
+    %{key_values | List.first(message) => List.last(message)}
   end
 end
