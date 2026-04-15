@@ -25,6 +25,8 @@ defmodule Commands.Handler do
           "ECHO" -> Echo.execute(client, message, key_values)
           "SET" -> updated_key_values = Set.execute(client, message, key_values)
                   IO.inspect(updated_key_values, label: "Current key-values after command execution")
+          "GET" -> updated_key_values = Commands.Get.execute(client, message, key_values)
+                  IO.inspect(updated_key_values, label: "Current key-values after command execution")
           _ -> Logger.error("Unknown command: #{command}")
         end
 
