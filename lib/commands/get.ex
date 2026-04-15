@@ -8,6 +8,7 @@ defmodule Commands.Get do
     value = Map.get(key_values, key, nil)
 
     if value do
+      IO.inspect(value, label: "Value found for key #{key}")
       :gen_tcp.send(client, "$#{byte_size(value)}\r\n#{value}\r\n")
     else
       :gen_tcp.send(client, "$-1\r\n")
