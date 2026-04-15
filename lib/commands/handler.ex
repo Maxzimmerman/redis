@@ -23,11 +23,10 @@ defmodule Commands.Handler do
         case command do
           "PING" -> Ping.execute(client, message, key_values)
           "ECHO" -> Echo.execute(client, message, key_values)
-          "SET" -> key_values = Set.execute(client, message, key_values)
+          "SET" -> updated_key_values = Set.execute(client, message, key_values)
+                  IO.inspect(updated_key_values, label: "Current key-values after command execution")
           _ -> Logger.error("Unknown command: #{command}")
         end
-
-        IO.inspect(key_values, label: "Current key-values after command execution")
 
         handle_client_async(client, key_values)
 
