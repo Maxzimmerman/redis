@@ -20,16 +20,18 @@ defmodule Commands.Handler do
       {:ok, data} ->
         {command, message} = encode_data(data)
 
-        case command do
-          "PING" -> Ping.execute(client, message, key_values)
-          "ECHO" -> Echo.execute(client, message, key_values)
-          "SET" -> updated_key_values = Set.execute(client, message, key_values)
-                  IO.inspect(updated_key_values, label: "Current key-values after command execution")
-          "GET" -> updated_key_values = Commands.Get.execute(client, message, key_values)
-                  IO.inspect(updated_key_values, label: "Current key-values after command execution")
-          _ -> Logger.error("Unknown command: #{command}")
-        end
+        updated_key_values =
+          case command do
+            "PING" -> Ping.execute(client, message, key_values)
+            "ECHO" -> Echo.execute(client, message, key_values)
+            "SET" -> Set.execute(client, message, key_values)
+            "GET" -> Commands.Get.execute(client, message, key_values)
+            _ ->
+              Logger.error("Unknown command: #{command}")
+              key_values
+          end
 
+        IO.inspect(updated_key_values, label: "Current key-values after command execution")
         handle_client_async(client, updated_key_values)
 
       {:error, :closed} ->
