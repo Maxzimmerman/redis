@@ -24,7 +24,7 @@ defmodule Server do
     # # ensures that we don't run into 'Address already in use' errors
     {:ok, socket} = :gen_tcp.listen(6379, [:binary, active: false, reuseaddr: true])
 
-    Handler.handle_connections_async(socket)
+    Handler.handle_connections_async(socket, %{})
   end
 end
 
