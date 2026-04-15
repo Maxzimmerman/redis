@@ -30,7 +30,7 @@ defmodule Commands.Handler do
           _ -> Logger.error("Unknown command: #{command}")
         end
 
-        handle_client_async(client, key_values)
+        handle_client_async(client, updated_key_values)
 
       {:error, :closed} ->
         :gen_tcp.close(client)
