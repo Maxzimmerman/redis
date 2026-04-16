@@ -32,7 +32,7 @@ defmodule RedisCache do
     {:reply, :ok, new_state}
   end
 
-  def set(pid, %{_: _} = key_value_pair) do
+  def set(pid, key_value_pair) do
     GenServer.call(pid, {:add, key_value_pair})
   end
 
