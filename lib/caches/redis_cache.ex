@@ -29,7 +29,7 @@ defmodule RedisCache do
   def handle_call({:add, key_value_pair}, _from, state) do
     [{key, value}] = Map.to_list(key_value_pair)
     new_state = Map.put(state, key, value)
-    {:noreply, key_value_pair, new_state}
+    {:noreply, :ok, new_state}
   end
 
   def set(pid, %{_: _} = key_value_pair) do
