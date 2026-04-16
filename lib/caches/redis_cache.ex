@@ -40,14 +40,14 @@ defmodule RedisCache do
   def set_with_exp(pid, key_value_pair, expiry) do
     [{key, _value}] = Map.to_list(key_value_pair)
     GenServer.call(pid, {:add, key_value_pair})
-    delete_value_after_timeout(key, expiry)
+    delete_value_after_timeout(pid, key, expiry)
   end
 
   def get(pid, key) do
     GenServer.call(pid, {:get, key})
   end
 
-  defp delete_value_after_timeout(key, timeout) do
+  defp delete_value_after_timeout(pid, key, timeout) do
     IO.puts("Scheduling deletion of key '#{key}' after #{timeout} ms")
     Process.send_after(pid, {:delete, key}, timeout)
   end
