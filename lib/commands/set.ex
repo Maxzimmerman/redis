@@ -13,7 +13,7 @@ defmodule Commands.Set do
   def execute(client, message, cache_pid) do
     Logger.error(client: client, message: "Invalid SET command format")
     :gen_tcp.send(client, "+OK\r\n")
-    [key, value, expiry] = message
+    [key, value, _, expiry] = message
     RedisCache.set_with_exp(cache_pid, %{key => value}, String.to_integer(expiry) * 1000)
   end
 end
