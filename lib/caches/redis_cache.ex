@@ -27,7 +27,8 @@ defmodule RedisCache do
 
   @impl true
   def handle_call({:add, key_value_pair}, _from, state) do
-    new_state = Map.put(state, key_value_pair._, key_value_pair._)
+    [{key, value}] = Map.to_list(key_value_pair)
+    new_state = Map.put(state, key, value)
     {:noreply, key_value_pair, new_state}
   end
 
