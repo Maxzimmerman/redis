@@ -13,27 +13,38 @@ defmodule RedisCache do
   end
 
   @impl true
-  def handle_call(:delete, _from, state) do
-    [deleted | new_state] = state
-    {:reply, deleted, new_state}
+  def handle_call({:delete, key}, _from, state) do
+    value = Map.get(state, key)
+    new_state = Map.drop(state, [key])
+    {:reply, value, new_state}
   end
 
   @impl true
-  def handle_call(:get, _from, state) do
-    {:reply, state, state}
+  def handle_call({:get, key}, _from, state) do
+    value = Map.get(state, key)
+    {:reply, value, state}
   end
 
   @impl true
-  def handle_cast({:add, key_value_pair}, state) do
-    new_state = [key_value_pair | state]
-    {:noreply, new_state}
+  def handle_call({:add, key_value_pair}, _from, state) do
+    new_state = Map.put(state, key_value_pair._, key_value_pair._)
+    {:noreply, key_value_pair, new_state}
   end
 
-  def set_key(pid, %{_: _} = key_value_pair) do
+  def set(pid, %{_: _} = key_value_pair) do
     GenServer.cast(pid, {:add, key_value_pair})
   end
 
-  def get_key(pid) do
+  def set_with_exp(pid, %{_: _} = key_value_pair, expiry) do
+    GenServer.cast(pid, {:add, key_value_pair})
+    delete_value_after_timeout(pid, key_value_pair._, expiry)
+  end
+
+  def get(pid) do
     GenServer.call(pid, :get)
+  end
+
+  defp delete_value_after_timeout(key, timeout) do
+    Process.send_after(self(), {:delete, key}, timeout)
   end
 end
