@@ -17,7 +17,8 @@ defmodule Server do
   def listen() do
     {:ok, socket} = :gen_tcp.listen(6379, [:binary, active: false, reuseaddr: true])
 
-    Handler.handle_connections_async(socket, %{})
+    {:ok, cache_pid} = RedisCache.start_link()
+    Handler.handle_connections_async(socket, cache_pid)
   end
 end
 

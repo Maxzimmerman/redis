@@ -35,7 +35,7 @@ defmodule RedisCache do
     GenServer.cast(pid, {:add, key_value_pair})
   end
 
-  def set_with_exp(pid, %{_: _} = key_value_pair, expiry) do
+  def set_with_exp(pid, key_value_pair, expiry) do
     GenServer.cast(pid, {:add, key_value_pair})
     delete_value_after_timeout(key_value_pair._, expiry)
   end
