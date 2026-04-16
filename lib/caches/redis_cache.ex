@@ -42,8 +42,8 @@ defmodule RedisCache do
     delete_value_after_timeout(key_value_pair._, expiry)
   end
 
-  def get(pid) do
-    GenServer.call(pid, :get)
+  def get(pid, key) do
+    GenServer.call(pid, key)
   end
 
   defp delete_value_after_timeout(key, timeout) do

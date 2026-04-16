@@ -5,7 +5,7 @@ defmodule Commands.Get do
   def execute(client, message, cache_pid) do
     Logger.info(client: client, message: message)
     key = List.first(message)
-    value = GenServer.call(cache_pid, {:get, key})
+    value = RedisCache.get(cache_pid, key)
 
     if value do
       :gen_tcp.send(client, "$#{byte_size(value)}\r\n#{value}\r\n")
