@@ -14,6 +14,6 @@ defmodule Commands.Set do
     Logger.error(client: client, message: "Invalid SET command format")
     :gen_tcp.send(client, "+OK\r\n")
     [key, value | _] = message
-     Map.put(key_values, key, value)
+    Map.put(key_values, key, value)
   end
 end
