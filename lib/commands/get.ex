@@ -2,10 +2,10 @@ defmodule Commands.Get do
   @behaviour Commands.Behaviour
   require Logger
 
-  def execute(client, message, key_values) do
+  def execute(client, message, cache_pid) do
     Logger.info(client: client, message: message)
     key = List.first(message)
-    value = Map.get(key_values, key, nil)
+    value = GenServer.call(cache_pid, {:get, key})
 
     IO.inspect(value, label: "GET value for key '#{key}'")
 
@@ -15,7 +15,5 @@ defmodule Commands.Get do
       IO.inspect("Key '#{key}' not found", label: "GET command")
       :gen_tcp.send(client, "$-1\r\n")
     end
-
-    key_values
   end
 end
