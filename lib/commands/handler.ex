@@ -31,7 +31,6 @@ defmodule Commands.Handler do
               key_values
           end
 
-        IO.inspect(updated_key_values, label: "Current key-values after command execution")
         handle_client_async(client, updated_key_values)
 
       {:error, :closed} ->
