@@ -4,7 +4,6 @@ defmodule Commands.Set do
 
   def execute(client, message, cache_pid) when length(message) == 2 do
     Logger.info(client: client, message: message)
-    IO.inspect(message, label: "SET command message")
     # For simplicity, we just acknowledge the SET command without actual storage
     :gen_tcp.send(client, "+OK\r\n")
     RedisCache.set(cache_pid, %{List.first(message) => List.last(message)})
