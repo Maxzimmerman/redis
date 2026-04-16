@@ -49,6 +49,6 @@ defmodule RedisCache do
 
   defp delete_value_after_timeout(key, timeout) do
     IO.puts("Scheduling deletion of key '#{key}' after #{timeout} ms")
-    Process.send_after(self(), {:delete, key}, timeout)
+    Process.send_after(pid, {:delete, key}, timeout)
   end
 end
