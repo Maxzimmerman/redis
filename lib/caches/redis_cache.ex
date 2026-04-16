@@ -22,7 +22,7 @@ defmodule RedisCache do
   @impl true
   def handle_call({:get, key}, _from, state) do
     IO.inspect(state, label: "Current cache state")
-    value = Map.get(state, key)
+    value = state[key]
     {:reply, value, state}
   end
 
