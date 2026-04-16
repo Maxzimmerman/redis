@@ -38,8 +38,9 @@ defmodule RedisCache do
   end
 
   def set_with_exp(pid, key_value_pair, expiry) do
+    [{key, _value}] = Map.to_list(key_value_pair)
     GenServer.call(pid, {:add, key_value_pair})
-    delete_value_after_timeout(key_value_pair._, expiry)
+    delete_value_after_timeout(key, expiry)
   end
 
   def get(pid, key) do
