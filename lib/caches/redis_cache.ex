@@ -64,6 +64,13 @@ defmodule RedisCache do
     GenServer.call(pid, {:get, key})
   end
 
+  def get_range(pid, key, start_index, end_index) do
+    case GenServer.call(pid, {:get, key}) do
+      nil -> nil
+      list when is_list(list) -> Enum.slice(list, start_index, end_index - start_index + 1)
+    end
+  end
+
   defp delete_value_after_timeout(pid, key, timeout) do
     IO.puts("Scheduling deletion of key '#{key}' after #{timeout} ms")
     Process.send_after(pid, {:delete, key}, timeout)
