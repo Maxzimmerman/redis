@@ -5,7 +5,7 @@ defmodule Commands.Handler do
   alias Commands.Echo
   alias Commands.Set
   alias Commands.Get
-  alias Commands.Push
+  alias Commands.RPush
 
   def handle_connections_async(socket, cache_pid) do
     case :gen_tcp.accept(socket) do
@@ -37,8 +37,8 @@ defmodule Commands.Handler do
           "GET" ->
             Get.execute(client, message, cache_pid)
 
-          "PUSH" ->
-            Push.execute(client, message, cache_pid)
+          "RPUSH" ->
+            RPush.execute(client, message, cache_pid)
 
           _ ->
             Logger.error("Unknown command: #{command}")

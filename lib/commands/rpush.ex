@@ -1,4 +1,4 @@
-defmodule Commands.Push do
+defmodule Commands.RPush do
   @behaviour Commands.Behaviour
   require Logger
 
