@@ -16,7 +16,5 @@ defmodule Commands.RPush do
         RedisCache.set(cache_pid, %{key => new_values})
         :gen_tcp.send(client, "+#{length(new_values)}\r\n")
     end
-    IO.inspect(%{key => values}, label: "RPUSH command parsed")
-    RedisCache.set(cache_pid, %{key => values})
   end
 end
