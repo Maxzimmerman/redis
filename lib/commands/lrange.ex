@@ -11,8 +11,7 @@ defmodule Commands.LRange do
 
     IO.inspect(elements)
 
-    for element <- elements do
-      :gen_tcp.send(client, "$#{byte_size(element)}\r\n#{element}\r\n")
-    end
+    body = for element <- elements, into: "", do: "$#{byte_size(element)}\r\n#{element}\r\n"
+    :gen_tcp.send(client, "*#{length(elements)}\r\n" <> body)
   end
 end
