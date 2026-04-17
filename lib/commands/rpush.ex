@@ -8,7 +8,8 @@ defmodule Commands.RPush do
     :gen_tcp.send(client, "+OK\r\n")
     [key | values] = message
 
-    IO.inspect(%{key => [values: values]}, label: "RPUSH command parsed")
+    IO.inspect(RedisCache.get(cache_pid, key))
+    IO.inspect(%{key => [values]}, label: "RPUSH command parsed")
     RedisCache.set(cache_pid, %{key => values})
   end
 end
