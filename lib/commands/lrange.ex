@@ -7,11 +7,14 @@ defmodule Commands.LRange do
 
     [key | [start_index, end_index]] = message
 
-    elements = RedisCache.get_range(cache_pid, key, String.to_integer(start_index), String.to_integer(end_index))
+    case RedisCache.get_range(cache_pid, key, String.to_integer(start_index), String.to_integer(end_index)) do
+      nil -> :gen_tcp.send(client, "*0\r\n")
+      elements when is_list(elements) -> :gen_tcp.send(client, build_response(elements))
+    end
+  end
 
-    IO.inspect(elements)
-
+  defp build_response(elements) do
     body = for element <- elements, into: "", do: "$#{byte_size(element)}\r\n#{element}\r\n"
-    :gen_tcp.send(client, "*#{length(elements)}\r\n" <> body)
+    "*#{length(elements)}\r\n" <> body
   end
 end

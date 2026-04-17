@@ -1,0 +1,64 @@
+RESP2 (Redis Serialization Protocol) Cheat Sheet
+=================================================
+
+Every reply ends with \r\n (CRLF).
+
+Type          | Prefix | Format                       | Example
+--------------|--------|------------------------------|----------------------------------------
+Simple String | +      | +<text>\r\n                  | +OK\r\n
+Error         | -      | -<text>\r\n                  | -ERR wrong type\r\n
+Integer       | :      | :<n>\r\n                     | :42\r\n
+Bulk String   | $      | $<len>\r\n<data>\r\n         | $5\r\nhello\r\n
+Null Bulk     | $      | $-1\r\n                      | $-1\r\n
+Array         | *      | *<count>\r\n<elements...>    | *2\r\n$3\r\nfoo\r\n$3\r\nbar\r\n
+Null Array    | *      | *-1\r\n                      | *-1\r\n
+Empty Array   | *      | *0\r\n                       | *0\r\n
+
+Key rules:
+- Bulk string length is the byte count, not character count.
+- Arrays send only the header; elements are nested RESP values of any type.
+- Simple strings cannot contain \r or \n — use bulk strings for binary-safe data.
+
+
+Anki Cards
+==========
+
+--- Card 1 ---
+Front:
+  :gen_tcp.send(client, "+#{length(values)}\r\n")
+  (RPUSH reply — tester says: "Expected integer, found simple string")
+  What's wrong?
+Back:
+  The `+` prefix is a RESP Simple String. RPUSH must reply with a RESP
+  Integer, which uses the `:` prefix. Fix: ":#{length(values)}\r\n".
+
+--- Card 2 ---
+Front:
+  for element <- elements do
+    :gen_tcp.send(client, "$#{byte_size(element)}\r\n#{element}\r\n")
+  end
+  (LRANGE reply — tester says: "Expected array, found bulk string")
+  What's wrong?
+Back:
+  Missing the array header. A RESP Array starts with "*<count>\r\n"
+  before the nested bulk strings. Without it, the client parses the
+  first `$...` as the entire reply (one bulk string).
+  Fix: send "*#{length(elements)}\r\n" first, then each bulk string.
+
+--- Card 3 ---
+Front:
+  Name the 5 RESP2 reply types and their prefix bytes.
+Back:
+  +  Simple String   (+OK\r\n)
+  -  Error           (-ERR msg\r\n)
+  :  Integer         (:42\r\n)
+  $  Bulk String     ($5\r\nhello\r\n,  null = $-1\r\n)
+  *  Array           (*2\r\n...,        null = *-1\r\n, empty = *0\r\n)
+
+--- Card 4 ---
+Front:
+  What does the length in "$5\r\nhello\r\n" count — bytes or characters?
+Back:
+  Bytes. Bulk strings are binary-safe, so the length is the raw byte
+  count. In Elixir, use byte_size/1 (not String.length/1, which counts
+  graphemes).
