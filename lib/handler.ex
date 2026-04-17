@@ -6,13 +6,15 @@ defmodule Commands.Handler do
   alias Commands.Set
   alias Commands.Get
   alias Commands.RPush
+  alias Commands.LRange
 
   @commands %{
     "PING" => Ping,
     "ECHO" => Echo,
     "SET" => Set,
     "GET" => Get,
-    "RPUSH" => RPush
+    "RPUSH" => RPush,
+    "LRANGE" => LRange
   }
 
   def handle_connections_async(socket, cache_pid) do
