@@ -7,6 +7,14 @@ defmodule Commands.Handler do
   alias Commands.Get
   alias Commands.RPush
 
+  @commands %{
+    "PING" => Ping,
+    "ECHO" => Echo,
+    "SET" => Set,
+    "GET" => Get,
+    "RPUSH" => RPush
+  }
+
   def handle_connections_async(socket, cache_pid) do
     case :gen_tcp.accept(socket) do
       {:ok, client} ->
@@ -24,24 +32,8 @@ defmodule Commands.Handler do
       {:ok, data} ->
         {command, message} = encode_data(data)
 
-        case command do
-          "PING" ->
-            Ping.execute(client, message, cache_pid)
-
-          "ECHO" ->
-            Echo.execute(client, message, cache_pid)
-
-          "SET" ->
-            Set.execute(client, message, cache_pid)
-
-          "GET" ->
-            Get.execute(client, message, cache_pid)
-
-          "RPUSH" ->
-            RPush.execute(client, message, cache_pid)
-
-          _ ->
-            Logger.error("Unknown command: #{command}")
+        with command <- find_command(command) do
+          command.execute(client, message, cache_pid)
         end
 
         handle_client_async(client, cache_pid)
@@ -49,6 +41,10 @@ defmodule Commands.Handler do
       {:error, :closed} ->
         :gen_tcp.close(client)
     end
+  end
+
+  defp find_command(command) do
+    Map.get(@commands, command)
   end
 
   defp encode_data(data) do
