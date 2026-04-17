@@ -2,13 +2,15 @@ defmodule Commands.LRange do
   @behaviour Commands.Behaviour
   require Logger
 
-  def execute(client, message, _cache_pid) do
+  def execute(client, message, cache_pid) do
     Logger.info(client: client, message: message, command: "LRange")
 
-     [key | values] = message
+    [key | [start_index, end_index]] = message
 
-     :gen_tcp.send(client, "+OK\r\n")
+    elements = RedisCache.get_range(cache_pid, key, String.to_integer(start_index), String.to_integer(end_index))
 
-    :gen_tcp.send(client, "+OK\r\n")
+    IO.inspect(elements)
+
+    :gen_tcp.send(client, "*#{elements}\r\n")
   end
 end
