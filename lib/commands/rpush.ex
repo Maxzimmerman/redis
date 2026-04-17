@@ -5,11 +5,18 @@ defmodule Commands.RPush do
   def execute(client, message, cache_pid) do
     Logger.info(client: client, message: message, command: "RPUSH")
 
-    :gen_tcp.send(client, "+OK\r\n")
     [key | values] = message
 
-    IO.inspect(RedisCache.get(cache_pid, key))
-    IO.inspect(%{key => [values]}, label: "RPUSH command parsed")
+    case RedisCache.get(cache_pid, key) do
+      nil ->
+        RedisCache.set(cache_pid, %{key => values})
+        :gen_tcp.send(client, "+#{1}\r\n")
+      existing_values when is_list(existing_values) ->
+        new_values = existing_values ++ values
+        RedisCache.set(cache_pid, %{key => new_values})
+        :gen_tcp.send(client, "+#{length(new_values)}\r\n")
+    end
+    IO.inspect(%{key => values}, label: "RPUSH command parsed")
     RedisCache.set(cache_pid, %{key => values})
   end
 end
