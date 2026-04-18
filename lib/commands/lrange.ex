@@ -10,6 +10,8 @@ defmodule Commands.LRange do
     start_index = build_index(String.to_integer(start_index), length)
     end_index = build_index(String.to_integer(end_index), length)
 
+    IO.inspect({key, start_index, end_index}, label: "LRANGE parameters after index adjustment")
+
     case RedisCache.get_range(
            cache_pid,
            key,
