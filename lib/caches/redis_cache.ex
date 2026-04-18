@@ -46,7 +46,7 @@ defmodule RedisCache do
   end
 
   @impl true
-  def handle_call({:update_prepand, key_value_pair}, _from, state) do
+  def handle_call({:update_prepend, key_value_pair}, _from, state) do
     [{key, value}] = Map.to_list(key_value_pair)
     new_state = Map.put(state, key, Map.get(state, key) ++ value)
     {:reply, :ok, new_state}
