@@ -71,6 +71,13 @@ defmodule RedisCache do
     end
   end
 
+  def get_length(pid, key) do
+    case GenServer.call(pid, {:get, key}) do
+      nil -> nil
+      list when is_list(list) -> length(list)
+    end
+  end
+
   defp delete_value_after_timeout(pid, key, timeout) do
     IO.puts("Scheduling deletion of key '#{key}' after #{timeout} ms")
     Process.send_after(pid, {:delete, key}, timeout)
