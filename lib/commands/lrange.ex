@@ -31,7 +31,11 @@ defmodule Commands.LRange do
         i when i >= 0 -> i
       end
 
-    new_index
+    if new_index < 0 do
+      0
+    else
+      new_index
+    end
   end
 
   defp build_response(elements) do
