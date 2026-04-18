@@ -6,6 +6,7 @@ defmodule Commands.Handler do
   alias Commands.Set
   alias Commands.Get
   alias Commands.RPush
+  alias Commands.LPush
   alias Commands.LRange
 
   @commands %{
