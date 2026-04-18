@@ -7,11 +7,8 @@ defmodule Commands.LRange do
 
     [key | [start_index, end_index]] = message
     length = RedisCache.get_length(cache_pid, key)
-    IO.inspect({key, start_index, end_index}, label: "LRANGE parameters before index adjustment")
     start_index = build_index(String.to_integer(start_index), length)
     end_index = build_index(String.to_integer(end_index), length)
-
-    IO.inspect({key, start_index, end_index}, label: "LRANGE parameters after index adjustment")
 
     case RedisCache.get_range(
            cache_pid,

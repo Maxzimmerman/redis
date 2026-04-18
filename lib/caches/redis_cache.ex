@@ -27,7 +27,6 @@ defmodule RedisCache do
 
   @impl true
   def handle_call({:get, key}, _from, state) do
-    IO.inspect(state, label: "Current cache state")
     value = state[key]
     {:reply, value, state}
   end
@@ -90,7 +89,6 @@ defmodule RedisCache do
   end
 
   defp delete_value_after_timeout(pid, key, timeout) do
-    IO.puts("Scheduling deletion of key '#{key}' after #{timeout} ms")
     Process.send_after(pid, {:delete, key}, timeout)
   end
 end
