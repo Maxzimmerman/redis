@@ -13,7 +13,7 @@ defmodule Commands.RPush do
         :gen_tcp.send(client, ":#{length(values)}\r\n")
 
       existing_values when is_list(existing_values) ->
-        RedisCache.update_prepand(cache_pid, %{key => values})
+        RedisCache.update(cache_pid, %{key => values})
         updated_list = RedisCache.get(cache_pid, key)
         :gen_tcp.send(client, ":#{length(updated_list)}\r\n")
     end

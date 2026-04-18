@@ -14,6 +14,7 @@ defmodule Commands.Handler do
     "SET" => Set,
     "GET" => Get,
     "RPUSH" => RPush,
+    "LPUSH" => LPush,
     "LRANGE" => LRange
   }
 
@@ -51,7 +52,6 @@ defmodule Commands.Handler do
 
   defp encode_data(data) do
     parts = String.split(data, "\r\n", trim: true)
-    # Filter out RESP prefixes (*N, $N) to get just the values
     args =
       Enum.reject(parts, fn s -> String.starts_with?(s, "*") or String.starts_with?(s, "$") end)
 
