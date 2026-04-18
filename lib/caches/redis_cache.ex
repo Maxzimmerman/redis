@@ -54,7 +54,7 @@ defmodule RedisCache do
       for value <- values do
         [value | current_list]
       end
-    IO.inspect(list, label: "New state after prepend update")
+    IO.inspect(List.flatten(list), label: "New state after prepend update")
     new_state = Map.put(state, key, list)
     {:reply, :ok, new_state}
   end
