@@ -46,12 +46,23 @@ defmodule RedisCache do
     {:reply, :ok, new_state}
   end
 
+  @impl true
+  def handle_call({:update_prepand, key_value_pair}, _from, state) do
+    [{key, value}] = Map.to_list(key_value_pair)
+    new_state = Map.put(state, key, Map.get(state, key) ++ value)
+    {:reply, :ok, new_state}
+  end
+
   def set(pid, key_value_pair) do
     GenServer.call(pid, {:add, key_value_pair})
   end
 
   def update(pid, key_value_pair) do
     GenServer.call(pid, {:update, key_value_pair})
+  end
+
+  def update_prepend(pid, key_value_pair) do
+    GenServer.call(pid, {:update_prepend, key_value_pair})
   end
 
   def set_with_exp(pid, key_value_pair, expiry) do
