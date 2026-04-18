@@ -49,9 +49,10 @@ defmodule RedisCache do
   def handle_call({:update_prepend, key_value_pair}, _from, state) do
     [{key, values}] = Map.to_list(key_value_pair)
     IO.inspect({key, values, Map.get(state, key)}, label: "Updating list with new values (prepend)")
+    current_list = Map.get(state, key)
     list =
       for value <- values do
-        [value | Map.get(state, key)]
+        [value | current_list]
       end
     IO.inspect(list, label: "New state after prepend update")
     new_state = Map.put(state, key, list)
