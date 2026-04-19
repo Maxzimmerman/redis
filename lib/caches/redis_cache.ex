@@ -12,6 +12,10 @@ defmodule RedisCache do
     {:ok, data}
   end
 
+  @doc """
+  state operations
+  """
+
   @impl true
   def handle_info({:delete, key}, state) do
     new_state = Map.drop(state, [key])
@@ -38,6 +42,10 @@ defmodule RedisCache do
     {:reply, :ok, new_state}
   end
 
+  @doc """
+  list operations
+  """
+
   @impl true
   def handle_call({:update, key_value_pair}, _from, state) do
     [{key, value}] = Map.to_list(key_value_pair)
@@ -52,6 +60,17 @@ defmodule RedisCache do
     new_state = Map.put(state, key, new_values ++ Map.get(state, key))
     {:reply, :ok, new_state}
   end
+
+  @impl true
+  def handle_call({:remove_list_element, key_value_pair}, _from, state) do
+    [{key, values_to_remove}] = Map.to_list(key_value_pair)
+    new_state = Map.put(state, key, List.delete(Map.get(state, key), values_to_remove))
+    {:reply, new_state, state}
+  end
+
+  @doc """
+  public API
+  """
 
   def set(pid, key_value_pair) do
     GenServer.call(pid, {:add, key_value_pair})
@@ -73,6 +92,10 @@ defmodule RedisCache do
 
   def get(pid, key) do
     GenServer.call(pid, {:get, key})
+  end
+
+  def pop_list_element(key, pid) do
+    GenServer.call(pid, {:delete, key})
   end
 
   def get_range(pid, key, start_index, end_index) do
