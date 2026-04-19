@@ -91,7 +91,10 @@ defmodule RedisCache do
   end
 
   def get(pid, key) do
-    GenServer.call(pid, {:get, key})
+    case GenServer.call(pid, {:get, key}) do
+      nil -> nil
+      value -> value
+    end
   end
 
   def pop_list_element(key, pid) do
