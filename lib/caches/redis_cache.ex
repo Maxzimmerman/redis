@@ -63,7 +63,7 @@ defmodule RedisCache do
 
   @impl true
   def handle_call({:pop_list_element, key}, _from, state) do
-    [item_to_remove | updated_list] = Map.to_list(state[key])
+    [item_to_remove | updated_list] = state[key]
     new_state = Map.put(state, key, updated_list)
     {:reply, item_to_remove, new_state}
   end
