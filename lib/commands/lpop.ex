@@ -9,7 +9,7 @@ defmodule Commands.LPop do
   def execute(client, message, cache_pid) do
     Logger.info(client: client, message: message, command: "LPOP")
 
-    IO.inplement("Executing LPOP command with message: #{inspect(message)}")
+    IO.inspect("Executing LPOP command with message: #{inspect(message)}")
 
     [key | _rest] = message
 
