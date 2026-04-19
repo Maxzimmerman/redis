@@ -11,7 +11,7 @@ defmodule Commands.LPop do
 
     IO.inspect("Executing LPOP command with message: #{inspect(message)}")
 
-    [key | _rest] = message
+    [key | count] = message
 
     case RedisCache.pop_list_element(key, cache_pid) do
       nil ->
