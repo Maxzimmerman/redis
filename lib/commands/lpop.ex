@@ -1,4 +1,4 @@
-defmodule Commands.Lpop do
+defmodule Commands.LPop do
   @behaviour Commands.Behaviour
 
   require Logger
@@ -10,5 +10,13 @@ defmodule Commands.Lpop do
     Logger.info(client: client, message: message, command: "LPOP")
 
     [key | _rest] = message
+
+    case RedisCache.pop_list_element(key, cache_pid) do
+      nil ->
+        :gen_tcp.send(client, "$-1\r\n")
+
+      value ->
+        :gen_tcp.send(client, "$#{byte_size(value)}\r\n#{value}\r\n")
+    end
   end
 end
