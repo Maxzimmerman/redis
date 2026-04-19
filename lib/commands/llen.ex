@@ -18,4 +18,10 @@ defmodule Commands.LLen do
         :gen_tcp.send(client, ":#{length(existing_values)}\r\n")
     end
   end
+
+  @impl true
+  def execute(client, _message, _cache_pid) do
+    Logger.info(client: client, message: _message, command: "LLEN")
+    :gen_tcp.send(client, "-ERR wrong number of arguments for 'LLEN' command\r\n")
+  end
 end
