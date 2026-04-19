@@ -10,12 +10,12 @@ defmodule Commands.LLen do
   def execute(client, [key | _rest] = message, cache_pid) do
     Logger.info(client: client, message: message, command: "LLEN")
 
-    case RedisCache.get(cache_pid, key) do
+    case RedisCache.get_length(cache_pid, key) do
       nil ->
         :gen_tcp.send(client, ":0\r\n")
 
-      existing_values when is_list(existing_values) ->
-        :gen_tcp.send(client, ":#{length(existing_values)}\r\n")
+      length ->
+        :gen_tcp.send(client, ":#{length}\r\n")
     end
   end
 
