@@ -99,7 +99,7 @@ defmodule RedisCache do
   end
 
   def pop_list_element(key, pid) do
-    GenServer.call(pid, {:delete, key})
+    GenServer.call(pid, {:remove_list_element, key})
   end
 
   def get_range(pid, key, start_index, end_index) do
