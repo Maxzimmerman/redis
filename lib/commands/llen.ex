@@ -7,7 +7,7 @@ defmodule Commands.LLen do
 
 
   @impl true
-  def execute(client, [key, _value] = message, cache_pid) do
+  def execute(client, [key | _rest] = message, cache_pid) do
     Logger.info(client: client, message: message, command: "LLEN")
 
     case RedisCache.get(cache_pid, key) do
