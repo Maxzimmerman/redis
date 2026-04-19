@@ -63,8 +63,9 @@ defmodule RedisCache do
 
   @impl true
   def handle_call({:remove_list_element, key_value_pair}, _from, state) do
-    [{key, values_to_remove}] = Map.to_list(key_value_pair)
-    new_state = Map.put(state, key, List.delete(Map.get(state, key), values_to_remove))
+    [{key, _}] = Map.to_list(key_value_pair)
+    [_key, updated_list] = Map.to_list(state[key])
+    new_state = Map.put(state, key, updated_list)
     {:reply, new_state, state}
   end
 
