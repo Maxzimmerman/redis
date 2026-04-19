@@ -16,7 +16,6 @@ defmodule Commands.LPop do
         :gen_tcp.send(client, "$-1\r\n")
 
       value ->
-        IO.inspect(value)
         :gen_tcp.send(client, "$#{byte_size(value)}\r\n#{value}\r\n")
     end
   end
