@@ -48,12 +48,8 @@ defmodule RedisCache do
   @impl true
   def handle_call({:update_prepend, key_value_pair}, _from, state) do
     [{key, value}] = Map.to_list(key_value_pair)
-    IO.inspect(Map.get(state, key), label: "list before")
-    IO.inspect(value, label: "value to prepend")
     new_values = Enum.reverse(value)
-    IO.inspect(new_values, label: "reversed value to prepend")
     new_state = Map.put(state, key, new_values ++ Map.get(state, key))
-    IO.inspect(Map.get(new_state, key), label: "list after")
     {:reply, :ok, new_state}
   end
 
