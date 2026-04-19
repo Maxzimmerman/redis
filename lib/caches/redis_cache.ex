@@ -62,7 +62,7 @@ defmodule RedisCache do
   end
 
   @impl true
-  def handle_call({:remove_list_element, key_value_pair}, _from, state) do
+  def handle_call({:pop_list_element, key_value_pair}, _from, state) do
     [{key, _}] = Map.to_list(key_value_pair)
     [item_to_remove | updated_list] = Map.to_list(state[key])
     new_state = Map.put(state, key, updated_list)
@@ -99,7 +99,10 @@ defmodule RedisCache do
   end
 
   def pop_list_element(key, pid) do
-    GenServer.call(pid, {:remove_list_element, key})
+    case GenServer.call(pid, {:pop_list_element, key}) do
+      nil -> nil
+      value -> value
+    end
   end
 
   def get_range(pid, key, start_index, end_index) do
