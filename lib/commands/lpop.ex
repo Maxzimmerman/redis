@@ -9,6 +9,8 @@ defmodule Commands.LPop do
   def execute(client, message, cache_pid) do
     Logger.info(client: client, message: message, command: "LPOP")
 
+    IO.inplement("Executing LPOP command with message: #{inspect(message)}")
+
     [key | _rest] = message
 
     case RedisCache.pop_list_element(key, cache_pid) do
