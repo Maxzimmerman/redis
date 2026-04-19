@@ -8,6 +8,7 @@ defmodule Commands.Handler do
   alias Commands.RPush
   alias Commands.LPush
   alias Commands.LRange
+  alias Commands.LLen
 
   @commands %{
     "PING" => Ping,
@@ -16,7 +17,8 @@ defmodule Commands.Handler do
     "GET" => Get,
     "RPUSH" => RPush,
     "LPUSH" => LPush,
-    "LRANGE" => LRange
+    "LRANGE" => LRange,
+    "LLEN" => LLen
   }
 
   def handle_connections_async(socket, cache_pid) do
