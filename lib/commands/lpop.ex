@@ -30,8 +30,8 @@ defmodule Commands.LPop do
       nil ->
         :gen_tcp.send(client, "$-1\r\n")
 
-      value ->
-        :gen_tcp.send(client, "$#{byte_size(value)}\r\n#{value}\r\n")
+      values ->
+        :gen_tcp.send(client, "$#{byte_size(values)}\r\n#{values}\r\n")
     end
   end
 end
