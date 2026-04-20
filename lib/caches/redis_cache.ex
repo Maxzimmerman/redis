@@ -76,6 +76,7 @@ defmodule RedisCache do
     new_state = Map.put(state, key, updated_list)
     {:reply, to_remove, new_state}
   end
+
   @doc """
   public API
   """

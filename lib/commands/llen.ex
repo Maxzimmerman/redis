@@ -5,7 +5,6 @@ defmodule Commands.LLen do
 
   alias RedisCache
 
-
   @impl true
   def execute(client, [key | _rest] = message, cache_pid) do
     Logger.info(client: client, message: message, command: "LLEN")

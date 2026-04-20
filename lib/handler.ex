@@ -57,6 +57,7 @@ defmodule Commands.Handler do
 
   defp encode_data(data) do
     parts = String.split(data, "\r\n", trim: true)
+
     args =
       Enum.reject(parts, fn s -> String.starts_with?(s, "*") or String.starts_with?(s, "$") end)
 

@@ -20,7 +20,6 @@ defmodule Commands.LPop do
     end
   end
 
-
   def execute(client, [key, count] = message, cache_pid) do
     Logger.info(client: client, message: message, command: "LPOP")
 
