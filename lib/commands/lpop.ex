@@ -31,7 +31,12 @@ defmodule Commands.LPop do
         :gen_tcp.send(client, "$-1\r\n")
 
       values ->
-        :gen_tcp.send(client, "$#{byte_size(values)}\r\n#{values}\r\n")
+        :gen_tcp.send(client, build_response(values))
     end
+  end
+
+  defp build_response(elements) do
+    body = for element <- elements, into: "", do: "$#{byte_size(element)}\r\n#{element}\r\n"
+    "*#{length(elements)}\r\n" <> body
   end
 end
