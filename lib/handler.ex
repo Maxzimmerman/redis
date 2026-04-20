@@ -10,6 +10,7 @@ defmodule Commands.Handler do
   alias Commands.LRange
   alias Commands.LLen
   alias Commands.LPop
+  alias Command.BLPop
 
   @commands %{
     "PING" => Ping,
@@ -20,7 +21,8 @@ defmodule Commands.Handler do
     "LPUSH" => LPush,
     "LRANGE" => LRange,
     "LLEN" => LLen,
-    "LPOP" => LPop
+    "LPOP" => LPop,
+    "BLPOP" => BLPop
   }
 
   def handle_connections_async(socket, cache_pid) do
