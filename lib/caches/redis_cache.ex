@@ -70,7 +70,8 @@ defmodule RedisCache do
 
   @impl true
   def handle_call({:pop_list_elements, key, number_to_remove}, _from, state) do
-    updated_list = Enum.drop(state[key], number_to_remove)
+    IO.inspect(number_to_remove, label: "Number to remove")
+    updated_list = Enum.drop(state[key], String.to_integer(number_to_remove))
     new_state = Map.put(state, key, updated_list)
     {:reply, :ok, new_state}
   end
