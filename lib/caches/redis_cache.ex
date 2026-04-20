@@ -71,9 +71,10 @@ defmodule RedisCache do
   @impl true
   def handle_call({:pop_list_elements, key, number_to_remove}, _from, state) do
     IO.inspect(number_to_remove, label: "Number to remove")
-    updated_list = Enum.drop(state[key], String.to_integer(number_to_remove))
+    to_remove = Enum.take(state[key], String.to_integer(number_to_remove))
+    updated_list = List.delete(state[key], to_remove)
     new_state = Map.put(state, key, updated_list)
-    {:reply, :ok, new_state}
+    {:reply, to_remove, new_state}
   end
   @doc """
   public API
@@ -114,7 +115,7 @@ defmodule RedisCache do
   def pop_list_elements(key, number_to_remove, pid) do
     case GenServer.call(pid, {:pop_list_elements, key, number_to_remove}) do
       nil -> nil
-      value -> value
+      values -> values
     end
   end
 
