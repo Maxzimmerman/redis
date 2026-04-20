@@ -11,8 +11,8 @@ defmodule Command.BLPop do
     :gen_tcp.send(client, "$#{byte_size(msg)}\r\n#{msg}\r\n")
   end
 
-  def handle_event(%Event{type: "element_added", payload: payload}) do
-    Logger.info("Received event for list #{payload.list_key} with new element: #{payload.element}")
+  def handle_event(%Event{type: "element_added"} = event) do
+    Logger.info("Received event for list #{event.payload.list_key} with new element: #{event.payload.element}")
     :ok
   end
 end
