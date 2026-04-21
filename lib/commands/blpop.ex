@@ -1,4 +1,4 @@
-defmodule Command.BLPop do
+defmodule Commands.BLPop do
   @behaviour Commands.Behaviour
   @behaviour Events.Handler
   require Logger
