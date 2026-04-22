@@ -13,7 +13,8 @@ defmodule Commands.LPush do
 
     case RedisCache.get(cache_pid, key) do
       nil ->
-        RedisCache.set(cache_pid, %{key => values})
+        new_list = :queue.from_list(values)
+        RedisCache.set(cache_pid, %{key => new_list})
         send_event(key, List.first(values))
         :gen_tcp.send(client, ":#{length(values)}\r\n")
 
