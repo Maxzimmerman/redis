@@ -54,21 +54,25 @@ defmodule RedisCache do
 
   @impl true
   def handle_call({:pop_list_element, key}, _from, state) do
+    IO.inspect("Popping from start element from list with key: #{key} before pop state: #{inspect(state[key])}")
     case :queue.out(state[key]) do
       {:empty, _} ->
         {:reply, nil, state}
       {{:value, item_to_remove}, updated_queue} ->
         new_state = Map.put(state, key, updated_queue)
+        IO.inspect("Popping from start element from list with key: #{key} after pop state: #{inspect(new_state[key])}")
         {:reply, item_to_remove, new_state}
     end
   end
 
   @impl true
   def handle_call({:pop_list_elements, key, number_to_remove}, _from, state) do
+    IO.inspect("Popping from end #{number_to_remove} elements from list with key: #{key}s")
     case :queue.out_r(state[key]) do
       {:empty, _} ->
         {:reply, nil, state}
       {{:value, item_to_remove}, updated_queue} ->
+        IO.inspect("Popping from end element from list with key: #{key} after pop state: #{inspect(new_state[key])}")
         new_state = Map.put(state, key, updated_queue)
         {:reply, item_to_remove, new_state}
     end
