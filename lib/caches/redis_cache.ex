@@ -39,6 +39,8 @@ defmodule RedisCache do
   @impl true
   def handle_call({:update, key_value_pair}, _from, state) do
     [{key, values}] = Map.to_list(key_value_pair)
+    IO.inspect(:queue.from_list(values))
+    IO.inspect(Map.get(state, key))
     new_list = :queue.join(Map.get(state, key), :queue.from_list(values))
     new_state = Map.put(state, key, new_list)
     {:reply, :ok, new_state}

@@ -9,13 +9,14 @@ defmodule Commands.RPush do
 
     case RedisCache.get(cache_pid, key) do
       nil ->
-        RedisCache.set(cache_pid, %{key => values})
+        new_list = :queue.from_list(values)
+        RedisCache.set(cache_pid, %{key => new_list})
         :gen_tcp.send(client, ":#{length(values)}\r\n")
 
-      existing_values when is_list(existing_values) ->
+      {_existing_values, _} ->
         RedisCache.update(cache_pid, %{key => values})
         updated_list = RedisCache.get(cache_pid, key)
-        :gen_tcp.send(client, ":#{length(updated_list)}\r\n")
+        :gen_tcp.send(client, ":#{:queue.len(updated_list)}\r\n")
     end
   end
 end
