@@ -10,7 +10,7 @@ defmodule Commands.Handler do
   alias Commands.LRange
   alias Commands.LLen
   alias Commands.LPop
-  alias Command.BLPop
+  alias Commands.BLPop
 
   @commands %{
     "PING" => Ping,
