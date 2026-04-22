@@ -72,8 +72,8 @@ defmodule RedisCache do
       {:empty, _} ->
         {:reply, nil, state}
       {{:value, item_to_remove}, updated_queue} ->
-        IO.inspect("Popping from end element from list with key: #{key} after pop state: #{inspect(new_state[key])}")
         new_state = Map.put(state, key, updated_queue)
+        IO.inspect("Popping from end element from list with key: #{key} after pop state: #{inspect(new_state[key])}")
         {:reply, item_to_remove, new_state}
     end
   end
