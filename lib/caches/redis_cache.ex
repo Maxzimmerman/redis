@@ -12,10 +12,6 @@ defmodule RedisCache do
     {:ok, data}
   end
 
-  @doc """
-  state operations
-  """
-
   @impl true
   def handle_call({:delete, key}, _from, state) do
     value = Map.get(state, key)
