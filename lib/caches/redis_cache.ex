@@ -17,12 +17,6 @@ defmodule RedisCache do
   """
 
   @impl true
-  def handle_info({:delete, key}, state) do
-    new_state = Map.drop(state, [key])
-    {:noreply, new_state}
-  end
-
-  @impl true
   def handle_call({:delete, key}, _from, state) do
     value = Map.get(state, key)
     new_state = Map.drop(state, [key])
