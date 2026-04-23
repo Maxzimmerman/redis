@@ -28,6 +28,7 @@ defmodule RedisCache do
   @impl true
   def handle_call({:add, key_value_pair}, _from, state) do
     [{key, value}] = Map.to_list(key_value_pair)
+    IO.inspect(state)
     new_state = Map.put(state, key, value)
     {:reply, :ok, new_state}
   end
@@ -43,6 +44,7 @@ defmodule RedisCache do
     IO.inspect(Map.get(state, key))
     new_list = :queue.join(Map.get(state, key), :queue.from_list(values))
     new_state = Map.put(state, key, new_list)
+    IO.inspect(new_state)
     {:reply, :ok, new_state}
   end
 
@@ -51,6 +53,7 @@ defmodule RedisCache do
     [{key, value}] = Map.to_list(key_value_pair)
     new_list = :queue.join(:queue.from_list(value), Map.get(state, key))
     new_state = Map.put(state, key, new_list)
+    IO.inspect(new_state)
     {:reply, :ok, new_state}
   end
 
@@ -77,6 +80,14 @@ defmodule RedisCache do
         new_state = Map.put(state, key, updated_queue)
         IO.inspect("Popping from end element from list with key: #{key} after pop state: #{inspect(new_state[key])}")
         {:reply, item_to_remove, new_state}
+    end
+  end
+
+  @impl true
+  def handle_call({:get_length, key}, _form ,state) do
+    case state[key] do
+      nil -> {:reply, nil, state}
+      list -> {:reply, :queue.len(list), state}
     end
   end
 
@@ -126,14 +137,21 @@ defmodule RedisCache do
   def get_range(pid, key, start_index, end_index) do
     case GenServer.call(pid, {:get, key}) do
       nil -> nil
-      list when is_list(list) -> Enum.slice(list, start_index, end_index - start_index + 1)
+      list ->
+        elements_in_range =
+        :queue.fold(fn element, acc ->
+          [element | acc]
+        end, [], list)
+        IO.inspect(elements_in_range)
+        list = :queue.to_list(list)
+        Enum.slice(list, start_index, end_index - start_index + 1)
     end
   end
 
   def get_length(pid, key) do
-    case GenServer.call(pid, {:get, key}) do
+    case GenServer.call(pid, {:get_length, key}) do
       nil -> nil
-      list when is_list(list) -> length(list)
+      length -> length
     end
   end
 
