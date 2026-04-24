@@ -58,33 +58,57 @@ defmodule RedisCache do
   end
 
   @impl true
-  def handle_call({:pop_list_element, key}, _from, state) do
-    IO.inspect("Popping from start element from list with key: #{key} before pop state: #{inspect(state[key])}")
-    case :queue.out(state[key]) do
-      {:empty, _} ->
-        {:reply, nil, state}
-      {{:value, item_to_remove}, updated_queue} ->
-        new_state = Map.put(state, key, updated_queue)
-        IO.inspect("Popping from start element from list with key: #{key} after pop state: #{inspect(new_state[key])}")
-        {:reply, item_to_remove, new_state}
-    end
-  end
-
-  @impl true
-  def handle_call({:pop_list_elements, key, number_to_remove}, _from, state) do
+  def handle_call({:pop_right, key, number_to_remove}, _from, state) do
     IO.inspect("Popping from end #{number_to_remove} elements from list with key: #{key}s")
-    case :queue.out_r(state[key]) do
-      {:empty, _} ->
-        {:reply, nil, state}
-      {{:value, item_to_remove}, updated_queue} ->
-        new_state = Map.put(state, key, updated_queue)
-        IO.inspect("Popping from end element from list with key: #{key} after pop state: #{inspect(new_state[key])}")
-        {:reply, item_to_remove, new_state}
-    end
+
+    items_removed =
+      for _ <- 1..String.to_integer(number_to_remove) do
+        case :queue.out_r(state[key]) do
+          {:empty, _} ->
+            nil
+
+          {{:value, item_to_remove}, updated_queue} ->
+            state = Map.put(state, key, updated_queue)
+
+            IO.inspect(
+              "Popping from end element from list with key: #{key} after pop state: #{inspect(state[key])}"
+            )
+
+            item_to_remove
+        end
+      end
+
+    {:reply, items_removed, state}
   end
 
   @impl true
-  def handle_call({:get_length, key}, _form ,state) do
+  def handle_call({:pop_left, key, number_to_remove}, _from, state) do
+    IO.inspect("Popping from left #{number_to_remove} elements from list with key: #{key}s")
+
+    items_removed = Enum.slice(:queue.to_list(state[key]), 0, String.to_integer(number_to_remove))
+
+    updated_state =
+      for _ <- 1..String.to_integer(number_to_remove) do
+        updated_queue =
+          case :queue.out_r(state[key]) do
+            {:empty, _} ->
+              nil
+
+            {{:value, _item_to_remove}, updated_queue} ->
+              updated_queue
+          end
+
+        state = Map.put(state, key, updated_queue)
+        state
+      end
+
+    IO.inspect(updated_state, label: "Items removed from left pop")
+
+    {:reply, items_removed, state}
+  end
+
+  @impl true
+  def handle_call({:get_length, key}, _form, state) do
     case state[key] do
       nil -> {:reply, nil, state}
       list -> {:reply, :queue.len(list), state}
@@ -120,15 +144,15 @@ defmodule RedisCache do
     end
   end
 
-  def pop_list_element(key, pid) do
-    case GenServer.call(pid, {:pop_list_element, key}) do
+  def pop_right(key, number_to_remove, pid) do
+    case GenServer.call(pid, {:pop_right, key, number_to_remove}) do
       nil -> nil
-      value -> value
+      values -> values
     end
   end
 
-  def pop_list_elements(key, number_to_remove, pid) do
-    case GenServer.call(pid, {:pop_list_elements, key, number_to_remove}) do
+  def pop_left(key, number_to_remove, pid) do
+    case GenServer.call(pid, {:pop_left, key, number_to_remove}) do
       nil -> nil
       values -> values
     end
@@ -136,12 +160,19 @@ defmodule RedisCache do
 
   def get_range(pid, key, start_index, end_index) do
     case GenServer.call(pid, {:get, key}) do
-      nil -> nil
+      nil ->
+        nil
+
       list ->
         elements_in_range =
-        :queue.fold(fn element, acc ->
-          [element | acc]
-        end, [], list)
+          :queue.fold(
+            fn element, acc ->
+              [element | acc]
+            end,
+            [],
+            list
+          )
+
         IO.inspect(elements_in_range)
         list = :queue.to_list(list)
         Enum.slice(list, start_index, end_index - start_index + 1)

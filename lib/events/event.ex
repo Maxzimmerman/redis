@@ -5,8 +5,8 @@ defmodule Events.Event do
 
   typedstruct do
     @derive Jason.Encoder
-    field :type, String.t()
-    field :payload, map()
-    field :metadata, map()
+    field(:type, String.t())
+    field(:payload, map())
+    field(:metadata, map())
   end
 end

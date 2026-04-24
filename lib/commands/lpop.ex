@@ -11,7 +11,7 @@ defmodule Commands.LPop do
 
     IO.inspect("Executing LPOP command with message: #{inspect(message)}")
 
-    case RedisCache.pop_list_element(key, cache_pid) do
+    case RedisCache.pop_left(key, 1, cache_pid) do
       nil ->
         :gen_tcp.send(client, "$-1\r\n")
 
@@ -25,7 +25,7 @@ defmodule Commands.LPop do
 
     IO.inspect("Executing LPOP command with message: #{inspect(message)}")
 
-    case RedisCache.pop_list_elements(key, count, cache_pid) do
+    case RedisCache.pop_left(key, count, cache_pid) do
       nil ->
         :gen_tcp.send(client, "$-1\r\n")
 

@@ -15,6 +15,7 @@ defmodule Events.EventDispatcher do
     try do
       Enum.reduce_while(handlers, {:ok, event}, fn handler, _acc ->
         IO.inspect(handler, label: "Dispatching to handler")
+
         case handler.handle_event(event) do
           :ok -> {:cont, {:ok, nil}}
           {:ok, result} -> {:cont, {:ok, result}}

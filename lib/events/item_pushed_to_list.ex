@@ -8,8 +8,8 @@ defmodule Events.ItemPushedToList do
 
   typedstruct module: Payload do
     @derive Jason.Encoder
-    field :list_key, String.t()
-    field :element, String.t()
+    field(:list_key, String.t())
+    field(:element, String.t())
   end
 
   @impl true

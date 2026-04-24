@@ -14,7 +14,10 @@ defmodule Commands.BLPop do
 
   @impl true
   def handle_event(%Event{type: "element_added"} = event) do
-    Logger.info("Received event for list #{event.payload.list_key} with new element: #{event.payload.element}")
+    Logger.info(
+      "Received event for list #{event.payload.list_key} with new element: #{event.payload.element}"
+    )
+
     :ok
   end
 end
