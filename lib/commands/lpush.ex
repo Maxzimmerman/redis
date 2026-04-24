@@ -18,11 +18,11 @@ defmodule Commands.LPush do
         send_event(key, List.first(values))
         :gen_tcp.send(client, ":#{length(values)}\r\n")
 
-      existing_values when is_list(existing_values) ->
+      {_existing_values, _} ->
         RedisCache.update_prepend(cache_pid, %{key => values})
         updated_list = RedisCache.get(cache_pid, key)
         send_event(key, List.first(values))
-        :gen_tcp.send(client, ":#{length(updated_list)}\r\n")
+        :gen_tcp.send(client, ":#{:queue.len(updated_list)}\r\n")
     end
   end
 
