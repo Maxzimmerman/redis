@@ -1,5 +1,6 @@
 defmodule Commands.LPush do
   @behaviour Commands.Behaviour
+  @behaviour Events.Handler
   require Logger
 
   alias Events.EventDispatcher
@@ -21,9 +22,14 @@ defmodule Commands.LPush do
       {_existing_values, _} ->
         RedisCache.update_prepend(cache_pid, %{key => values})
         updated_list = RedisCache.get(cache_pid, key)
-        send_event(key, List.first(values), cache_pid, client)
         :gen_tcp.send(client, ":#{:queue.len(updated_list)}\r\n")
     end
+  end
+
+  # if element should be removed with blpop just send event to blpop to remove it immediately and send it to the client
+  @impl true
+  def handle_event(%Events.Event{type: "listen_for_pushed_element"} = event) do
+    send_event(key, List.first(values), cache_pid, client)
   end
 
   def send_event(key, element, cache_pid, client) do
