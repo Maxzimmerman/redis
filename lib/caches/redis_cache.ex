@@ -59,10 +59,12 @@ defmodule RedisCache do
 
   @impl true
   def handle_call({:pop_right, key, number_to_remove}, _from, state) do
-    items_removed = Enum.slice(:queue.to_list(state[key]), 0, number_to_remove)
     number_to_remove = String.to_integer(number_to_remove)
+    items_removed = Enum.slice(:queue.to_list(state[key]), 0, number_to_remove)
+
     updated_queue = pop_right(number_to_remove, state[key])
     updated_state = Map.put(state, key, updated_queue)
+
     {:reply, items_removed, updated_state}
   end
 
@@ -72,7 +74,6 @@ defmodule RedisCache do
     items_removed = Enum.slice(:queue.to_list(state[key]), 0, number_to_remove)
 
     updated_queue = pop_left_queue(number_to_remove, state[key])
-
     new_state = Map.put(state, key, updated_queue)
 
     {:reply, items_removed, new_state}
