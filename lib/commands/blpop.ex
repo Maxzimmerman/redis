@@ -6,6 +6,7 @@ defmodule Commands.BLPop do
   alias Events.Event
   alias RedisCache
 
+  # send listening event to rpush and lpush
   @impl true
   def execute(client, [key, 0] = message, _cache_pid) do
     Logger.info(client: client, message: message)
@@ -13,13 +14,13 @@ defmodule Commands.BLPop do
     :gen_tcp.send(client, "$#{byte_size(msg)}\r\n#{msg}\r\n")
   end
 
+  # if timout is reached just return
   @impl true
-  def execute(client, [key, timeout] = message, _cache_pic) do
-    Logger.info(client: client, message: message)
-    msg = List.first(message)
-    :gen_tcp.send(client, "$#{byte_size(msg)}\r\n#{msg}\r\n")
+  def execute(client, [_key, timeout] = message, _cache_pic) do
+    Process.send_after(self(), {:timeout, client}, timeout)
   end
 
+  # wait for element added events to remove it immediately and send it to the client
   @impl true
   def handle_event(%Event{type: "element_added"} = event) do
     Logger.info(
@@ -28,10 +29,10 @@ defmodule Commands.BLPop do
 
     case RedisCache.pop_left(event.payload.list_key, 1, self()) do
       nil ->
-        Logger.info("No elements to pop from list #{event.payload.list_key}")
+        :gen_tcp.send(event.payload.client, "$*\r\n")
 
       element ->
-        Logger.info("Popped element '#{element}' from list #{event.payload.list_key}")
+        :gen_tcp.send(event.payload.client, "$*2\r\n$#{byte_size(event.payload.list_key)}\r\n#{event.payload.list_key}\r\n$#{byte_size(element)}\r\n#{element}\r\n")
     end
   end
 end

@@ -1,4 +1,4 @@
-defmodule Events.ItemPushedToList do
+defmodule Events.ListenForPushedElementEvents do
   @behaviour Events.Event
 
   alias Events.Event

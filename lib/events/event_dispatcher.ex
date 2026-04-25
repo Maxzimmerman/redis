@@ -2,10 +2,14 @@ defmodule Events.EventDispatcher do
   import Events.EventType
 
   alias Commands.BLPop
+  alias Commands.RPush
+  alias Commands.LPush
 
   @command_handlers %{
     element_added() => [
-      BLPop
+      BLPop,
+      RPush,
+      LPush
     ]
   }
 
