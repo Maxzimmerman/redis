@@ -85,26 +85,14 @@ defmodule RedisCache do
   def handle_call({:pop_left, key, number_to_remove}, _from, state) do
     IO.inspect("Popping from left #{number_to_remove} elements from list with key: #{key}s")
 
-    items_removed = Enum.slice(:queue.to_list(state[key]), 0, String.to_integer(number_to_remove))
+    number_to_remove = String.to_integer(number_to_remove)
+    items_removed = Enum.slice(:queue.to_list(state[key]), 0, number_to_remove)
 
-    updated_state =
-      for _ <- 1..String.to_integer(number_to_remove) do
-        updated_queue =
-          case :queue.out_r(state[key]) do
-            {:empty, _} ->
-              nil
+    updated_queue = pop_left_queue(number_to_remove, state[key])
 
-            {{:value, _item_to_remove}, updated_queue} ->
-              updated_queue
-          end
+    new_state = Map.put(state, key, updated_queue)
 
-        state = Map.put(state, key, updated_queue)
-        state
-      end
-
-    IO.inspect(updated_state, label: "Items removed from left pop")
-
-    {:reply, items_removed, state}
+    {:reply, items_removed, new_state}
   end
 
   @impl true
@@ -188,5 +176,12 @@ defmodule RedisCache do
 
   defp delete_value_after_timeout(pid, key, timeout) do
     Process.send_after(pid, {:delete, key}, timeout)
+  end
+
+  defp pop_left_queue(0, queue), do: queue
+
+  defp pop_left_queue(count, queue) do
+    {{:value, _}, updated_queue} = :queue.out(queue)
+    pop_left_queue(count - 1, updated_queue)
   end
 end
