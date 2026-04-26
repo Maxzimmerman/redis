@@ -6,6 +6,7 @@ defmodule Commands.RPush do
   alias Events.EventDispatcher
   alias Events.ItemPushedToList
   alias Events.ItemPushedToList.Payload
+  @impl true
   def execute(client, message, cache_pid) do
     Logger.info(client: client, message: message, command: "RPUSH")
 
