@@ -31,10 +31,10 @@ defmodule Commands.LPush do
     send_event(event.payload.list_key, event.payload.cache_pid, event.payload.client)
   end
 
-  def send_event(key, element, cache_pid, client) do
+  def send_event(key, cache_pid, client) do
     payload = %Payload{
       list_key: key,
-      element: element,
+      element: nil,
       cache_pid: cache_pid,
       client: client
     }
