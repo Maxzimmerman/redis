@@ -16,7 +16,6 @@ defmodule Commands.LPush do
       nil ->
         new_list = :queue.from_list(values)
         RedisCache.set(cache_pid, %{key => new_list})
-        send_event(key, List.first(values), cache_pid, client)
         :gen_tcp.send(client, ":#{length(values)}\r\n")
 
       {_existing_values, _} ->
@@ -29,7 +28,7 @@ defmodule Commands.LPush do
   # if element should be removed with blpop just send event to blpop to remove it immediately and send it to the client
   @impl true
   def handle_event(%Events.Event{type: "listen_for_pushed_element"} = event) do
-    send_event(key, List.first(values), cache_pid, client)
+    send_event(event.payload.list_key, event.payload.cache_pid, event.payload.client)
   end
 
   def send_event(key, element, cache_pid, client) do
