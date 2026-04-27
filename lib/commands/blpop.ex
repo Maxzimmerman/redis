@@ -17,6 +17,7 @@ defmodule Commands.BLPop do
   # if timout is reached just return
   @impl true
   def execute(client, [_key, timeout] = message, _cache_pic) do
+    
   end
 
   # wait for element added events to remove it immediately and send it to the client
