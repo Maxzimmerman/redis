@@ -5,6 +5,7 @@ defmodule Commands.BLPop do
 
   alias Events.Event
   alias RedisCache
+  alias Events.Index
 
   # send listening event to rpush and lpush
   @impl true
@@ -17,6 +18,7 @@ defmodule Commands.BLPop do
   # if timout is reached just return
   @impl true
   def execute(client, [_key, timeout] = message, _cache_pic) do
+    :timer.apply_after(timeout, __MODULE__, :delete_task, [task_id])
   end
 
   # wait for element added events to remove it immediately and send it to the client
@@ -36,5 +38,9 @@ defmodule Commands.BLPop do
           "$*2\r\n$#{byte_size(event.payload.list_key)}\r\n#{event.payload.list_key}\r\n$#{byte_size(element)}\r\n#{element}\r\n"
         )
     end
+  end
+
+  defp delete_task(task_id) do
+    Index.delete_taks(task_id)
   end
 end
