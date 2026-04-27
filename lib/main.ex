@@ -8,7 +8,12 @@ defmodule Server do
   alias Commands.Handler
 
   def start(_type, _args) do
-    Supervisor.start_link([{Task, fn -> Server.listen() end}], strategy: :one_for_one)
+    children = [
+      {Repo, []},
+      {Task, fn -> Server.listen() end}
+    ]
+
+    Supervisor.start_link(children, strategy: :one_for_one)
   end
 
   @doc """

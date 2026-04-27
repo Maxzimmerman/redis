@@ -17,7 +17,6 @@ defmodule Commands.BLPop do
   # if timout is reached just return
   @impl true
   def execute(client, [_key, timeout] = message, _cache_pic) do
-    
   end
 
   # wait for element added events to remove it immediately and send it to the client
@@ -32,7 +31,10 @@ defmodule Commands.BLPop do
         :gen_tcp.send(event.payload.client, "$*\r\n")
 
       element ->
-        :gen_tcp.send(event.payload.client, "$*2\r\n$#{byte_size(event.payload.list_key)}\r\n#{event.payload.list_key}\r\n$#{byte_size(element)}\r\n#{element}\r\n")
+        :gen_tcp.send(
+          event.payload.client,
+          "$*2\r\n$#{byte_size(event.payload.list_key)}\r\n#{event.payload.list_key}\r\n$#{byte_size(element)}\r\n#{element}\r\n"
+        )
     end
   end
 end
