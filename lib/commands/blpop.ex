@@ -8,7 +8,7 @@ defmodule Commands.BLPop do
 
   # send listening event to rpush and lpush
   @impl true
-  def execute(_client, [_key, "0"], _cache_pid), do: Process.sleep(60_000)
+  def execute(_client, [_key, "0"], _cache_pid), do: Process.sleep(10_000)
 
   # if timout is reached just return
   @impl true
