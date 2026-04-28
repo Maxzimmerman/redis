@@ -27,7 +27,7 @@ defmodule Commands.BLPop do
       "Received event for list #{event.payload.list_key} with new element: #{event.payload.element}"
     )
 
-    case RedisCache.pop_left(event.payload.list_key, 1, self()) do
+    case RedisCache.pop_left(event.payload.list_key, 1, event.payload.cache_pid) do
       nil ->
         :gen_tcp.send(event.payload.client, "$*\r\n")
 
