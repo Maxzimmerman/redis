@@ -35,6 +35,7 @@ defmodule Commands.RPush do
       cache_pid: cache_pid,
       client: client
     }
+    IO.inspect(payload, label: "Event Payload")
 
     event = ItemPushedToList.new(payload)
     Events.EventDispatcher.dispatch(event)
