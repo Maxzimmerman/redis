@@ -30,6 +30,7 @@ defmodule Commands.BLPop do
         :gen_tcp.send(event.payload.client, "$*\r\n")
 
       element ->
+        IO.inspect(element, label: "Popped element from list #{event.payload.list_key} for client #{event.payload.client}")
         :gen_tcp.send(
           event.payload.client,
           "$*2\r\n$#{byte_size(event.payload.list_key)}\r\n#{event.payload.list_key}\r\n$#{byte_size(element)}\r\n#{element}\r\n"
