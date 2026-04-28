@@ -11,7 +11,7 @@ defmodule Events.ItemPushedToList do
     field(:list_key, String.t())
     field(:element, String.t())
     field(:cache_pid, pid())
-    field(:client, port())
+    field(:client, :gen_tcp.socket())
   end
 
   @impl true
