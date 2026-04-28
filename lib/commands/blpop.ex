@@ -6,10 +6,6 @@ defmodule Commands.BLPop do
   alias Events.Event
   alias RedisCache
 
-  # send listening event to rpush and lpush
-  @impl true
-  def execute(_client, [_key, 0], _cache_pid), do: :timer.sleep(:infinity)
-
   # if timout is reached just return
   @impl true
   def execute(client, [_key, timeout], _cache_pid) do
