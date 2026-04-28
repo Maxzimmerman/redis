@@ -41,6 +41,5 @@ defmodule Commands.BLPop do
 
   def close_connection(client) do
     :gen_tcp.send(client, "$*-1\r\n")
-    :gen_tcp.close(client)
   end
 end
