@@ -17,7 +17,7 @@ defmodule Commands.BLPop do
   # if timout is reached just return
   @impl true
   def execute(client, [_key, timeout], _cache_pid) do
-    :timer.apply_after(timeout * 100, __MODULE__, :close_connection, [client])
+    :timer.apply_after(timeout * 1000, __MODULE__, :close_connection, [client])
   end
 
   # wait for element added events to remove it immediately and send it to the client
