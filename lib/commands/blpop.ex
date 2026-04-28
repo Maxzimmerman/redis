@@ -6,9 +6,13 @@ defmodule Commands.BLPop do
   alias Events.Event
   alias RedisCache
 
+  # send listening event to rpush and lpush
+  @impl true
+  def execute(_client, [_key, "0"], _cache_pid), do: :ok
+
   # if timout is reached just return
   @impl true
-  def execute(client, [_key, timeout], _cache_pid) when timeout > 0 do
+  def execute(client, [_key, timeout], _cache_pid) do
     IO.inspect("Executing BLPOP command with timeout: #{timeout}")
     :timer.apply_after(String.to_integer(timeout) * 1000, __MODULE__, :close_connection, [client])
   end
