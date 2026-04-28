@@ -12,11 +12,8 @@ defmodule Events.EventDispatcher do
   def dispatch(event) do
     handlers = Map.get(@command_handlers, event.type, [])
 
-    IO.inspect(handlers, label: "Handlers for event type #{event.type}")
-
     try do
       Enum.reduce_while(handlers, {:ok, event}, fn handler, _acc ->
-        IO.inspect(handler, label: "Dispatching to handler")
 
         case handler.handle_event(event) do
           :ok -> {:cont, {:ok, nil}}
@@ -26,7 +23,6 @@ defmodule Events.EventDispatcher do
       end)
     rescue
       e ->
-        IO.inspect(e, label: "Error in event handler")
         {:error, e}
     end
   end
