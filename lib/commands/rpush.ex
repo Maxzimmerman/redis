@@ -16,7 +16,7 @@ defmodule Commands.RPush do
         new_list = :queue.from_list(values)
         RedisCache.set(cache_pid, %{key => new_list})
         IO.inspect(client, label: "Client")
-        send_event(key, List.first(new_list), cache_pid, client)
+        send_event(key, List.first(values), cache_pid, client)
         :gen_tcp.send(client, ":#{length(values)}\r\n")
 
       {_existing_values, _} ->
