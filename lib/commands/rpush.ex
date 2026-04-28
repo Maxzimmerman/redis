@@ -15,11 +15,13 @@ defmodule Commands.RPush do
       nil ->
         new_list = :queue.from_list(values)
         RedisCache.set(cache_pid, %{key => new_list})
+        send_event(key, cache_pid, client)
         :gen_tcp.send(client, ":#{length(values)}\r\n")
 
       {_existing_values, _} ->
         RedisCache.update(cache_pid, %{key => values})
         updated_list = RedisCache.get(cache_pid, key)
+        send_event(key, cache_pid, client)
         :gen_tcp.send(client, ":#{:queue.len(updated_list)}\r\n")
     end
   end
