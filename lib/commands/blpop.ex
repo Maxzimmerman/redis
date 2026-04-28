@@ -8,9 +8,7 @@ defmodule Commands.BLPop do
 
   # send listening event to rpush and lpush
   @impl true
-  def execute(client, [key, 0] = message, _cache_pid) do
-    Logger.info(client: client, message: message)
-  end
+  def execute(_client, [_key, 0], _cache_pid), do: :ok
 
   # if timout is reached just return
   @impl true
