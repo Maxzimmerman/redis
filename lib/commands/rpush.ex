@@ -16,25 +16,26 @@ defmodule Commands.RPush do
         new_list = :queue.from_list(values)
         RedisCache.set(cache_pid, %{key => new_list})
         IO.inspect(client, label: "Client")
-        send_event(key, cache_pid, client)
+        send_event(key, List.first(new_list), cache_pid, client)
         :gen_tcp.send(client, ":#{length(values)}\r\n")
 
       {_existing_values, _} ->
         RedisCache.update(cache_pid, %{key => values})
         updated_list = RedisCache.get(cache_pid, key)
         IO.inspect(client, label: "Client")
-        send_event(key, cache_pid, client)
+        send_event(key, List.first(values), cache_pid, client)
         :gen_tcp.send(client, ":#{:queue.len(updated_list)}\r\n")
     end
   end
 
-  def send_event(key, cache_pid, client) do
+  def send_event(key, element, cache_pid, client) do
     payload = %Payload{
       list_key: key,
-      element: nil,
+      element: element,
       cache_pid: cache_pid,
       client: client
     }
+
     IO.inspect(payload, label: "Event Payload")
 
     event = ItemPushedToList.new(payload)

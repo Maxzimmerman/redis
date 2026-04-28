@@ -131,14 +131,13 @@ defmodule RedisCache do
         nil
 
       list ->
-        elements_in_range =
-          :queue.fold(
-            fn element, acc ->
-              [element | acc]
-            end,
-            [],
-            list
-          )
+        :queue.fold(
+          fn element, acc ->
+            [element | acc]
+          end,
+          [],
+          list
+        )
 
         list = :queue.to_list(list)
         Enum.slice(list, start_index, end_index - start_index + 1)

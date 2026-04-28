@@ -5,7 +5,7 @@ defmodule Events.EventDispatcher do
 
   @command_handlers %{
     element_added() => [
-      BLPop,
+      BLPop
     ]
   }
 
@@ -14,7 +14,6 @@ defmodule Events.EventDispatcher do
 
     try do
       Enum.reduce_while(handlers, {:ok, event}, fn handler, _acc ->
-
         case handler.handle_event(event) do
           :ok -> {:cont, {:ok, nil}}
           {:ok, result} -> {:cont, {:ok, result}}
