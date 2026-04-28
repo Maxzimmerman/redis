@@ -9,7 +9,6 @@ defmodule Server do
 
   def start(_type, _args) do
     children = [
-      {Repo, []},
       {Task, fn -> Server.listen() end}
     ]
 
