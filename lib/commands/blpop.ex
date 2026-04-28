@@ -13,6 +13,7 @@ defmodule Commands.BLPop do
   # if timout is reached just return
   @impl true
   def execute(client, [_key, timeout], _cache_pid) do
+    IO.inspect("Executing BLPOP command with timeout: #{timeout}")
     :timer.apply_after(String.to_integer(timeout) * 1000, __MODULE__, :close_connection, [client])
   end
 
