@@ -42,9 +42,7 @@ defmodule Commands.Handler do
       {:ok, data} ->
         {command, message} = encode_data(data)
 
-        with command <- find_command(command) do
-          command.execute(client, message, cache_pid)
-        end
+        find_command(command).execute(client, message, cache_pid)
 
         handle_client_async(client, cache_pid)
 
