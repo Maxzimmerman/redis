@@ -9,7 +9,7 @@ defmodule Commands.Type do
     Logger.info(client: client, message: key)
     case RedisCache.get(cache_pid, key) do
       nil ->
-        :gen_tcp.send(client, "$-1\r\n")
+        :gen_tcp.send(client, "+none\r\n")
       element ->
         send_response(element, client)
     end
