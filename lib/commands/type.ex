@@ -15,5 +15,9 @@ defmodule Commands.Type do
     end
   end
 
+  def execute(client, message, cache_pid) do
+    IO.inspect(message)
+  end
+
   defp send_response(element, client) when is_binary(element), do: :gen_tcp.send(client, "$#{byte_size(element)}\r\n#{element}\r\n")
 end
