@@ -14,12 +14,12 @@ defmodule Commands.LPush do
 
     case RedisCache.get(cache_pid, key) do
       nil ->
-        new_list = :queue.from_list(values)
+        new_list = :queue.from_list(Enum.reverse(values))
         RedisCache.set(cache_pid, %{key => new_list})
         :gen_tcp.send(client, ":#{length(values)}\r\n")
 
       {_existing_values, _} ->
-        RedisCache.update_prepend(cache_pid, %{key => values})
+        RedisCache.update_prepend(cache_pid, %{key => Enum.reverse(values)})
         updated_list = RedisCache.get(cache_pid, key)
         :gen_tcp.send(client, ":#{:queue.len(updated_list)}\r\n")
     end
