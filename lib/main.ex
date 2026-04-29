@@ -9,6 +9,7 @@ defmodule Server do
 
   def start(_type, _args) do
     children = [
+      Commands.BLPopRegistry,
       {Task, fn -> Server.listen() end}
     ]
 
