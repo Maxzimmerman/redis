@@ -38,15 +38,16 @@ defmodule Commands.BLPop do
 
     case BLPopRegistry.pop_waiter(key) do
       {:ok, {client_socket, pid}} ->
-        element = RedisCache.pop_left(key, "1", cache_pid)
+        case RedisCache.pop_left(key, "1", cache_pid) do
+          [element] ->
+            resp =
+              "*2\r\n$#{byte_size(key)}\r\n#{key}\r\n$#{byte_size(element)}\r\n#{element}\r\n"
 
-        if element do
-          resp =
-            "*2\r\n$#{byte_size(key)}\r\n#{key}\r\n$#{byte_size(element)}\r\n#{element}\r\n"
+            :gen_tcp.send(client_socket, resp)
+            send(pid, {:blpop_result, key, element})
 
-          :gen_tcp.send(client_socket, resp)
-          # Unblock the waiting process so it can loop back to recv
-          send(pid, {:blpop_result, key, element})
+          _ ->
+            nil
         end
 
         :ok
