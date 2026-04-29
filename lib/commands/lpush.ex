@@ -2,10 +2,6 @@ defmodule Commands.LPush do
   @behaviour Commands.Behaviour
   require Logger
 
-  alias Events.EventDispatcher
-  alias Events.ItemPushedToList
-  alias Events.ItemPushedToList.Payload
-
   @impl true
   def execute(client, message, cache_pid) do
     Logger.info(client: client, message: message, command: "RPUSH")
@@ -23,17 +19,5 @@ defmodule Commands.LPush do
         updated_list = RedisCache.get(cache_pid, key)
         :gen_tcp.send(client, ":#{:queue.len(updated_list)}\r\n")
     end
-  end
-
-  def send_event(key, cache_pid, client) do
-    payload = %Payload{
-      list_key: key,
-      element: nil,
-      cache_pid: cache_pid,
-      client: client
-    }
-
-    event = ItemPushedToList.new(payload)
-    EventDispatcher.dispatch(event)
   end
 end
