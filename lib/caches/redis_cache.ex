@@ -151,6 +151,11 @@ defmodule RedisCache do
     end
   end
 
+  @impl true
+  def handle_info({:delete, key}, state) do
+    {:noreply, Map.delete(state, key)}
+  end
+
   defp delete_value_after_timeout(pid, key, timeout) do
     Process.send_after(pid, {:delete, key}, timeout)
   end
