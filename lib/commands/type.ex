@@ -15,5 +15,5 @@ defmodule Commands.Type do
     end
   end
 
-  defp send_response(element, client) when is_binary(element), do: :gen_tcp.send(client, "$#{byte_size("string")}\r\nstring\r\n")
+  defp send_response(element, client) when is_binary(element), do: :gen_tcp.send(client, "+string\r\n")
 end
