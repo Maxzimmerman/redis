@@ -20,7 +20,8 @@ defmodule Commands.BLPop do
   @impl true
   def execute(client, [key, timeout], _cache_pid) do
     BLPopRegistry.register(key, client, self())
-    timeout_ms = String.to_integer(timeout) * 1000
+    {seconds, _} = Float.parse(timeout)
+    timeout_ms = trunc(seconds * 1000)
 
     receive do
       {:blpop_result, _key, _element} -> :ok
