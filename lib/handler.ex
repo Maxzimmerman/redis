@@ -24,7 +24,7 @@ defmodule Commands.Handler do
     "LLEN" => LLen,
     "LPOP" => LPop,
     "BLPOP" => BLPop,
-    "Type" => Type
+    "TYPE" => Type
   }
 
   def handle_connections_async(socket, cache_pid) do
