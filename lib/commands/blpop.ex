@@ -1,4 +1,14 @@
 defmodule Commands.BLPop do
+  @moduledoc """
+  Exactly right. One small correction — the RPUSH doesn't send the event "to the blocked process." The event handler runs in the RPUSH process, and it:
+
+  1. Asks the Agent: "who's been waiting longest for this key?"
+  2. Agent returns {socket, pid}
+  3. RPUSH process uses socket to send the TCP response to the right client
+  4. RPUSH process uses pid to send(pid, {:blpop_result, ...}) — this is what wakes up the blocked process
+
+  Two separate things: the socket is for talking to the client over TCP, the pid is for unblocking the frozen process so it can loop back to handle_client_async and read the next command.
+  """
   @behaviour Commands.Behaviour
   @behaviour Events.Handler
   require Logger
