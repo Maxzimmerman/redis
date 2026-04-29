@@ -5,8 +5,8 @@ defmodule Commands.Type do
 
   alias RedisCache
 
-  def execute(client, [_command, key] = message, cache_pid) do
-    Logger.info(client: client, message: message)
+  def execute(client, [key], cache_pid) do
+    Logger.info(client: client, message: key)
     case RedisCache.get(cache_pid, key) do
       nil ->
         :gen_tcp.send(client, "$-1\r\n")
@@ -15,9 +15,5 @@ defmodule Commands.Type do
     end
   end
 
-  def execute(client, message, cache_pid) do
-    IO.inspect(message)
-  end
-
-  defp send_response(element, client) when is_binary(element), do: :gen_tcp.send(client, "$#{byte_size(element)}\r\n#{element}\r\n")
+  defp send_response(element, client) when is_binary(element), do: :gen_tcp.send(client, "$#{byte_size("string")}\r\nstring\r\n")
 end
