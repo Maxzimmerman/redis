@@ -9,11 +9,11 @@ defmodule Commands.LPop do
   def execute(client, [key] = message, cache_pid) do
     Logger.info(client: client, message: message, command: "LPOP")
 
-    case RedisCache.pop_left(key, 1, cache_pid) do
+    case RedisCache.pop_left(key, "1", cache_pid) do
       nil ->
         :gen_tcp.send(client, "$-1\r\n")
 
-      value ->
+      [value] ->
         :gen_tcp.send(client, "$#{byte_size(value)}\r\n#{value}\r\n")
     end
   end
