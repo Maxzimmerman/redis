@@ -52,7 +52,7 @@ defmodule Commands.Handler do
   end
 
   defp find_command(command) do
-    Map.get(@commands, command)
+    Map.fetch!(@commands, command)
   end
 
   defp encode_data(data) do

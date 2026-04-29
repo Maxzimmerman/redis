@@ -4,7 +4,7 @@ defmodule Commands.LPush do
 
   @impl true
   def execute(client, message, cache_pid) do
-    Logger.info(client: client, message: message, command: "RPUSH")
+    Logger.info(client: client, message: message, command: "LPUSH")
 
     [key | values] = message
 
