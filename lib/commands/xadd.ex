@@ -6,14 +6,12 @@ defmodule Commands.XADD do
 
   @impl true
   def execute(client, [key, id | fields], cache_pid) do
-    stream = %Stream{id: id}
-
     updated_fields =
       fields
       |> Enum.chunk_every(2)
-      |> Map.new(& {&1, &2})
+      |> Map.new(fn [k, v] -> {k, v} end)
 
-    IO.inspect(updated_fields)
+    stream = %Stream{id: id, fields: updated_fields}
 
     RedisCache.set(cache_pid, %{key => stream})
 
