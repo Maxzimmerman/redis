@@ -13,6 +13,8 @@ defmodule Commands.XADD do
 
     stream = %Stream{id: id, fields: updated_fields}
 
+    IO.inspect(stream)
+
     RedisCache.set(cache_pid, %{key => stream})
 
     :gen_tcp.send(client, "$#{byte_size(id)}\r\n#{id}\r\n")
