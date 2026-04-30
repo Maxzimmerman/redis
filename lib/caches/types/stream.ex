@@ -1,3 +1,3 @@
 defmodule Caches.Types.Stream do
-  defstruct [id: nil, fields: %{}]
+  defstruct id: nil, fields: %{}
 end

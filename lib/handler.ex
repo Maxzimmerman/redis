@@ -32,7 +32,8 @@ defmodule Commands.Handler do
   def handle_connections_async(socket, cache_pid) do
     case :gen_tcp.accept(socket) do
       {:ok, client} ->
-        Task.start(fn -> handle_client_async(client, cache_pid) end)
+        {:ok, pid} = Task.start(fn -> handle_client_async(client, cache_pid) end)
+        :gen_tcp.controlling_process(client, pid)
 
       {:error, reason} ->
         Logger.error("Error accepting connection: #{reason}")
