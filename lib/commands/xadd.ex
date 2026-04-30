@@ -11,7 +11,7 @@ defmodule Commands.XADD do
     updated_fields =
       fields
       |> Enum.chunk_every(2)
-      |> Map.new(fn [k, v] -> %{k => v} end)
+      |> Map.new(fn [k, v] -> {k, v} end)
 
     IO.inspect(updated_fields)
 
