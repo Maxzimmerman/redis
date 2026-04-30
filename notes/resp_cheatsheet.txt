@@ -62,3 +62,19 @@ Back:
   Bytes. Bulk strings are binary-safe, so the length is the raw byte
   count. In Elixir, use byte_size/1 (not String.length/1, which counts
   graphemes).
+
+
+  # Guards — use in function heads, case, cond, with                                                                                                                                                      
+  is_binary(value)      # "foo" — strings in Elixir are binaries                                                                                                                                          
+  is_integer(value)     # 42                                                                                                                                                                              
+  is_float(value)       # 3.14                                                                                                                                                                            
+  is_number(value)      # integer or float                                                                                                                                                                
+  is_atom(value)        # :ok, true, false, nil                                                                                                                                                           
+  is_list(value)        # [1, 2, 3]                                                                                                                                                                       
+  is_map(value)         # %{key: "val"}
+  is_tuple(value)       # {:ok, "val"}                                                                                                                                                                    
+  is_pid(value)         # #PID<0.123.0>
+  is_boolean(value)     # true/false (subset of atoms)                                                                                                                                                    
+  is_nil(value)         # nil                                                                                                                                                                             
+  is_struct(value)      # any struct
+  is_struct(value, User) # specific struct 

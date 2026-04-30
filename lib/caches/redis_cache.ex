@@ -83,6 +83,10 @@ defmodule RedisCache do
   end
 
   @doc """
+  stream functions
+  """
+
+  @doc """
   public API
   """
 
