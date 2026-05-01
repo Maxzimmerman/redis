@@ -6,6 +6,7 @@ defmodule Commands.XADD do
 
   @impl true
   def execute(client, [key, id | fields], cache_pid) do
+    validate_key(key)
     updated_fields =
       fields
       |> Enum.chunk_every(2)
@@ -18,5 +19,11 @@ defmodule Commands.XADD do
     RedisCache.set(cache_pid, %{key => stream})
 
     :gen_tcp.send(client, "$#{byte_size(id)}\r\n#{id}\r\n")
+  end
+
+  defp validate_key(key) do
+    [first, second] = String.split(key, "-")
+    IO.inspect(first)
+    IO.inspect(second)
   end
 end
