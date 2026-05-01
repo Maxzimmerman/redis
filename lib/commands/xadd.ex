@@ -23,6 +23,7 @@ defmodule Commands.XADD do
 
   defp validate_key(key) do
     [first, second] = String.split(key, "-")
+    IO.inspect(key)
     IO.inspect(first)
     IO.inspect(second)
   end
