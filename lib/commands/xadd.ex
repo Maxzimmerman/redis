@@ -6,7 +6,7 @@ defmodule Commands.XADD do
 
   @impl true
   def execute(client, [key, id | fields], cache_pid) do
-    validate_key(key)
+    validate_key(id)
 
     updated_fields =
       fields
