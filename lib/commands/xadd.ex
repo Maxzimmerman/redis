@@ -23,10 +23,7 @@ defmodule Commands.XADD do
   end
 
   defp validate_key(key) do
-    IO.inspect(key, label: "INPUT")
+    IO.inspect(System.system_time(:milisecond), label: "INPUT")
     [first, second] = String.split(key, "-")
-    IO.inspect(key)
-    IO.inspect(first)
-    IO.inspect(second)
   end
 end
