@@ -22,8 +22,8 @@ defmodule Commands.XADD do
     :gen_tcp.send(client, "$#{byte_size(id)}\r\n#{id}\r\n")
   end
 
-  defp validate_key(key) do
-    IO.inspect(System.system_time(:millisecond), label: "INPUT")
-    [first, second] = String.split(key, "-")
+  defp validate_key(id) do
+    IO.inspect("#{System.system_time(:millisecond)}-#{id}", label: "INPUT")
+    [first, second] = String.split(id, "-")
   end
 end
